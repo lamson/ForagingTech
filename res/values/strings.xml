@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ForagingTech</string>
+    <string name="btn_footer_flying">Flying</string>
+    <string name="btn_footer_navigating">Navigating</string>
+    <string name="btn_footer_setting">Setting</string>
+    <string name="activate_mode">Activate</string>
+    <string name="back_to_menu">Back</string>
+    <string name="emergency">Emergency</string>
+</resources>

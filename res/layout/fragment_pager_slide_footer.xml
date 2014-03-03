@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FooterPager" >
+
+    <Button
+        android:id="@+id/footer_pager1"
+        style="@style/FooterPagerButton"
+        android:drawableLeft="@drawable/btn_footer_pager1"
+        android:text="@string/btn_footer_flying" />
+
+    <Button
+        android:id="@+id/footer_pager2"
+        style="@style/FooterPagerButton"
+        android:drawableLeft="@drawable/btn_footer_pager2" />
+
+    <Button
+        android:id="@+id/footer_pager3"
+        style="@style/FooterPagerButton"
+        android:drawableLeft="@drawable/btn_footer_pager3" />
+
+</LinearLayout>

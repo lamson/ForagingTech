@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="top|right"
+    android:paddingTop="60dp"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/camera_texture_view_wrappter"
+        android:layout_width="340dp"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="#6a00ff"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <TextureView
+            android:id="@+id/camera_texture_view"            
+            android:layout_width="match_parent"
+    		android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/camera_image_view_wrappter"
+        android:layout_width="340dp"
+        android:layout_height="200dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/camera_texture_view_wrappter"
+        android:background="#6a00ff"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <ImageView
+            android:id="@+id/camera_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/camera_image_view_wrappter"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/camera_image_view_wrappter"
+        android:orientation="vertical" >
+        
+        <Button
+	        android:id="@+id/btn_image_mode1"
+	        style="@style/FooterPagerButton"
+	        android:textSize="25sp"
+	        android:drawableLeft="@drawable/btn_play_pressed"
+	        android:text="Canny Processing" />
+        
+        <Button
+	        android:id="@+id/btn_image_mode2"
+	        style="@style/FooterPagerButton"
+	        android:textSize="25sp"
+	        android:drawableLeft="@drawable/btn_play_unpressed"
+	        android:text="Hough Circles" />
+        
+        <Button
+	        android:id="@+id/btn_image_mode3"
+	        style="@style/FooterPagerButton"
+	        android:textSize="25sp"
+	        android:drawableLeft="@drawable/btn_play_unpressed"
+	        android:text="Hough Circles (Red)" />
+        
+        <Button
+	        android:id="@+id/btn_image_mode4"
+	        style="@style/FooterPagerButton"
+	        android:textSize="25sp"
+	        android:drawableLeft="@drawable/btn_play_unpressed"
+	        android:text="Threshold (Red)" />
+
+    </LinearLayout>
+
+</RelativeLayout>

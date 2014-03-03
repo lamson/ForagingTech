@@ -1,0 +1,5 @@
+<resources>
+    <style name="mainTheme" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+</resources>

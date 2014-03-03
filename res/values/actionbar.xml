@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ActionBarEmergencyButton">
+        <item name="android:background">@drawable/btn_emergency_unpressed</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:drawablePadding">5dp</item>
+		<item name="android:paddingLeft">5dp</item>
+		<item name="android:fontFamily">sans-serif</item>
+		<item name="android:textStyle">bold|italic</item>
+		<item name="android:textColor">#e51400</item>
+		<item name="android:textColorHint">#e51400</item>
+		<item name="android:textSize">30sp</item>
+	</style>
+	
+    <style name="ActionBarImage">
+        <item name="android:background">@null</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:fontFamily">sans-serif</item>
+		<item name="android:textStyle">bold|italic</item>
+		<item name="android:textColor">#fff</item>
+		<item name="android:textColorHint">#fff</item>
+		<item name="android:textSize">30sp</item>
+	</style>
+	
+    <style name="ActionBarCompat" parent="@style/mainTheme">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">#30ffffff</item>
+    </style>
+    
+    <style name="FooterPager" parent="@style/mainTheme">
+        <item name="android:gravity">center</item>
+		<item name="android:layout_gravity">bottom</item>
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">80dp</item>
+		<item name="android:orientation">horizontal</item>
+		<item name="android:background">@null</item>
+	</style>
+	
+    <style name="FooterPagerButton">
+        <item name="android:background">@null</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:drawablePadding">5dp</item>
+		<item name="android:paddingLeft">5dp</item>
+		<item name="android:fontFamily">sans-serif</item>
+		<item name="android:textStyle">bold|italic</item>
+		<item name="android:textColor">#fff</item>
+		<item name="android:textColorHint">#fff</item>
+		<item name="android:textSize">30sp</item>
+	</style>
+</resources>

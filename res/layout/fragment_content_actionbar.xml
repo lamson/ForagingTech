@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/ActionBarCompat" >
+
+	<Button android:id="@+id/btn_back" style="@style/FooterPagerButton"
+		android:drawableLeft="@drawable/btn_back_unpressed"
+		android:layout_gravity="top|left"
+		android:text="@string/back_to_menu" />
+	
+	<Button
+	    android:id="@+id/btn_debug"
+	    style="@style/FooterPagerButton"
+	    android:layout_gravity="top|right"
+	    android:drawableLeft="@drawable/btn_debug_unpressed" />
+
+	<Button
+	    android:id="@+id/btn_toggle_video"
+	    style="@style/FooterPagerButton"
+	    android:layout_gravity="top|right"
+	    android:layout_marginRight="60dp"
+	    android:drawableLeft="@drawable/btn_show_video_unpressed" />
+	
+	<Button
+	    android:id="@+id/btn_takeoff"
+	    style="@style/FooterPagerButton"
+	    android:layout_gravity="top|right"
+	    android:layout_marginRight="120dp"
+	    android:drawableLeft="@drawable/btn_takeoff_unpressed" />
+	
+	<Button
+	    android:id="@+id/btn_test"
+	    style="@style/FooterPagerButton"
+	    android:layout_gravity="top|right"
+	    android:layout_marginRight="180dp"
+	    android:drawableLeft="@drawable/btn_test_unpressed" />
+	
+	<Button
+	    android:id="@+id/btn_takephoto"
+	    style="@style/FooterPagerButton"
+	    android:layout_gravity="top|right"
+	    android:layout_marginRight="240dp"
+	    android:drawableLeft="@drawable/btn_takephoto_unpressed" />
+	
+	<Button
+	    android:id="@+id/btn_emergency"
+	    style="@style/ActionBarEmergencyButton"
+	    android:layout_gravity="top|center"
+	    android:paddingLeft="40dp"
+	    android:text="@string/emergency" />
+
+</FrameLayout>

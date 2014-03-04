@@ -12,7 +12,10 @@ import org.opencv.imgproc.Imgproc;
 import com.felicekarl.foragingtech.R;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.TextureView.SurfaceTextureListener;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -32,7 +36,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	private static final String TAG = CameraFragment.class.getSimpleName();
 	
 	private TextureView mTextureView;
-	private ImageView mImageView;
+	private TextureView mImageView;
 	private SurfaceTexture mSurfaceTexture;
 	private Surface mSurface;
 	private RelativeLayout camera_texture_view_wrappter;
@@ -45,8 +49,9 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	private int mSurfaceWidth;
 	private int mSurfaceHeight;
 	
+	private RenderThread mThread;
 	
-	
+	private Bitmap videoSource;
 	// opencv variables
 	private Mat tmp;
 	private Mat mIntermediateMat, mIntermediateMat2;
@@ -54,6 +59,9 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	private Mat circles;
 	private Point pt;
 	
+	private Object mFrameSyncObject = new Object();     // guards mFrameAvailable
+	private boolean mFrameAvailable = true;
+	 
 	public enum IMAGEMODE{
 		CANNY, HOUGHCIRCLES, REDHOUGHCIRCLES, REDTHRESHOLD
 	}
@@ -82,7 +90,8 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
     	view = (ViewGroup) inflater.inflate(R.layout.fragment_camera, container, false);
     	mTextureView = (TextureView) view.findViewById(R.id.camera_texture_view);
     	mTextureView.setSurfaceTextureListener(this);
-    	mImageView = (ImageView) view.findViewById(R.id.camera_image_view);
+    	mImageView = (TextureView) view.findViewById(R.id.camera_image_view);
+    	mImageView.setSurfaceTextureListener(new CanvasListener());
     	camera_texture_view_wrappter = (RelativeLayout) view.findViewById(R.id.camera_texture_view_wrappter);
     	camera_image_view_wrappter = (RelativeLayout) view.findViewById(R.id.camera_image_view_wrappter);
     	btn_image_mode1 = (Button) view.findViewById(R.id.btn_image_mode1);
@@ -107,10 +116,11 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
     }
     
     public Bitmap getProcessedImage() {
-    	mImageView.buildDrawingCache();
-    	Bitmap bmp = Bitmap.createBitmap(mImageView.getDrawingCache());
-    	mImageView.destroyDrawingCache();
-    	return bmp;
+//    	mImageView.buildDrawingCache();
+//    	Bitmap bmp = Bitmap.createBitmap(mImageView.getDrawingCache());
+//    	mImageView.destroyDrawingCache();
+//    	return bmp;
+    	return mImageView.getBitmap();
     }
     
 	public static CameraFragment create() {
@@ -146,137 +156,21 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	@Override
 	public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
 		Log.d(TAG, "surface width: " + width + " | height: " + height);
-		tmp = new Mat(width, height, CvType.CV_8UC1);
-		mIntermediateMat = new Mat(width, height, CvType.CV_8UC4);
-		mIntermediateMat2 = new Mat(width, height, CvType.CV_8UC1);
-		thresholdImage = new Mat(width, height, CvType.CV_8UC1);
+
 	}
 
 	@Override
 	public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-		//Log.d(TAG, surface.toString());
-		Bitmap video = mTextureView.getBitmap();
-		if (mode.equals(IMAGEMODE.CANNY)) {
-			Utils.bitmapToMat(video, tmp);
-			
-			Imgproc.cvtColor(tmp, tmp, Imgproc.COLOR_RGB2GRAY);
-		    Imgproc.Canny(tmp, mIntermediateMat, 80, 100);
-		    Imgproc.cvtColor(mIntermediateMat, tmp, Imgproc.COLOR_GRAY2RGBA, 4);
-		    Utils.matToBitmap(tmp, video);
-		} else if (mode.equals(IMAGEMODE.HOUGHCIRCLES)) {
-			Utils.bitmapToMat(video, tmp);
-			Imgproc.cvtColor(tmp, thresholdImage, Imgproc.COLOR_RGB2GRAY, 2);
-            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
-            
-            Mat circles = new Mat();
-			
-            int iCannyUpperThreshold = 65;
-            int iMinRadius = 5;
-            int iMaxRadius = 400;
-            int iAccumulator = 200;
-            int iLineThickness = 3;
-            
-            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
-            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
-            		iMinRadius, iMaxRadius);
-            
-            if (circles.cols() > 0){
-            	for(int i=0; i<circles.cols(); i++){
-            		double vCircle[] = circles.get(0,i);
-            		if (vCircle == null)	break;
-
-					pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
-					int radius = (int)Math.round(vCircle[2]);
-					
-					// draw the found circle
-					Core.circle(tmp, pt, radius, new Scalar(255,0,0), iLineThickness);
-					Core.circle(tmp, pt, 3, new Scalar(255,0,0), iLineThickness);
-            	}
-            }
-            Utils.matToBitmap(tmp, video);
-			
-		} else if (mode.equals(IMAGEMODE.REDHOUGHCIRCLES)) {
-			Utils.bitmapToMat(video, tmp);
-			Imgproc.cvtColor(tmp, mIntermediateMat2, Imgproc.COLOR_RGB2HSV, 4);
-			
-			Core.inRange(mIntermediateMat2, new Scalar(-2, 80, 80), new Scalar(3, 255, 255), thresholdImage); // for blue color
-            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
-            
-            Mat circles = new Mat();
-			
-            int iCannyUpperThreshold = 55;
-            int iMinRadius = 3;
-            int iMaxRadius = 400;
-            int iAccumulator = 68;
-            int iLineThickness = 3;
-            
-            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
-            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
-            		iMinRadius, iMaxRadius);
-            
-            
-            
-            if (circles.cols() > 0){
-            	for(int i=0; i<circles.cols(); i++){
-            		double vCircle[] = circles.get(0,i);
-            		if (vCircle == null)	break;
-
-					pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
-					int radius = (int)Math.round(vCircle[2]);
-					
-					// draw the found circle
-					Core.circle(tmp, pt, radius, new Scalar(255,0,0), iLineThickness);
-					Core.circle(tmp, pt, 3, new Scalar(255,0,0), iLineThickness);
-            	}
-            }
-            //Imgproc.cvtColor(thresholdImage, tmp, Imgproc.COLOR_GRAY2BGR, 0);
-			Utils.matToBitmap(tmp, video);
-		} else if (mode.equals(IMAGEMODE.REDTHRESHOLD)) {
-			Utils.bitmapToMat(video, tmp);
-			Imgproc.cvtColor(tmp, mIntermediateMat2, Imgproc.COLOR_RGB2HSV, 4);
-			
-			Core.inRange(mIntermediateMat2, new Scalar(-2, 80, 80), new Scalar(3, 255, 255), thresholdImage); // for blue color
-            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
-            
-            Mat circles = new Mat();
-			
-            int iCannyUpperThreshold = 55;
-            int iMinRadius = 3;
-            int iMaxRadius = 400;
-            int iAccumulator = 68;
-            int iLineThickness = 3;
-            
-            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
-            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
-            		iMinRadius, iMaxRadius);
-            
-            
-            
-            if (circles.cols() > 0){
-            	for(int i=0; i<circles.cols(); i++){
-            		double vCircle[] = circles.get(0,i);
-            		if (vCircle == null)	break;
-
-					pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
-					int radius = (int)Math.round(vCircle[2]);
-					
-					// draw the found circle
-					Core.circle(thresholdImage, pt, radius, new Scalar(255,0,0), iLineThickness);
-					Core.circle(thresholdImage, pt, 3, new Scalar(255,0,0), iLineThickness);
-            	}
-            }
-            Imgproc.cvtColor(thresholdImage, tmp, Imgproc.COLOR_GRAY2BGR, 0);
-			Utils.matToBitmap(tmp, video);
-		}
+		videoSource = mTextureView.getBitmap();
 		
-	    
-		mImageView.setImageBitmap(video);
 	}
 	
 	public void setFullScreen() {
 		ViewGroup.LayoutParams params = camera_texture_view_wrappter.getLayoutParams();
-		params.width = 660;
-		params.height = 380;
+		params.width = 500;
+		params.height = 290;
+//		params.width = 660;
+//		params.height = 380;
 		camera_texture_view_wrappter.requestLayout();
 	}
 	
@@ -329,5 +223,197 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 			btn_image_mode4.setCompoundDrawables(icon_pressed, null, null, null);
 			break;
 		}
+	}
+	
+	
+	private class CanvasListener implements SurfaceTextureListener {
+
+		@Override
+		public void onSurfaceTextureAvailable(SurfaceTexture surface,
+				int width, int height) {
+			Log.d(TAG, "onSurfaceTextureAvailable");
+			mThread = new RenderThread();
+			mThread.start();
+		}
+
+		@Override
+		public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+			Log.d(TAG, "onSurfaceTextureDestroyed");
+			if (mThread != null) {
+				mThread.stopRendering();
+			}
+			return true;
+		}
+
+		@Override
+		public void onSurfaceTextureSizeChanged(SurfaceTexture surface,
+				int width, int height) {
+			Log.d(TAG, "onSurfaceTextureSizeChanged");
+		}
+
+		@Override
+		public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+			//Log.d(TAG, "onSurfaceTextureUpdated");
+		}
+		
+	}
+	
+	
+	
+	private class RenderThread extends Thread {
+		private volatile boolean mRunning = true;
+
+		@Override
+		public void run() {
+			Paint paint = new Paint();
+			paint.setAntiAlias(true);
+			paint.setFilterBitmap(true);
+			paint.setDither(true);
+			
+			tmp = new Mat(width, height, CvType.CV_8UC1);
+			mIntermediateMat = new Mat(width, height, CvType.CV_8UC4);
+			mIntermediateMat2 = new Mat(width, height, CvType.CV_8UC1);
+			thresholdImage = new Mat(width, height, CvType.CV_8UC1);
+
+			while (mRunning && !Thread.interrupted()) {
+				final Canvas canvas = mImageView.lockCanvas(null);
+				try {
+					if (videoSource != null) {
+						Bitmap video = Bitmap.createScaledBitmap(videoSource, 320, 180, true);
+						if (mode.equals(IMAGEMODE.CANNY)) {
+							Utils.bitmapToMat(video, tmp);
+							
+							Imgproc.cvtColor(tmp, tmp, Imgproc.COLOR_RGB2GRAY);
+						    Imgproc.Canny(tmp, mIntermediateMat, 80, 100);
+						    Imgproc.cvtColor(mIntermediateMat, tmp, Imgproc.COLOR_GRAY2RGBA, 4);
+						    Utils.matToBitmap(tmp, video);
+						} else if (mode.equals(IMAGEMODE.HOUGHCIRCLES)) {
+							Utils.bitmapToMat(video, tmp);
+							Imgproc.cvtColor(tmp, thresholdImage, Imgproc.COLOR_RGB2GRAY, 2);
+				            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
+				            
+				            Mat circles = new Mat();
+							
+				            int iCannyUpperThreshold = 65;
+				            int iMinRadius = 5;
+				            int iMaxRadius = 400;
+				            int iAccumulator = 200;
+				            int iLineThickness = 3;
+				            
+				            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
+				            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
+				            		iMinRadius, iMaxRadius);
+				            
+				            if (circles.cols() > 0){
+				            	for(int i=0; i<circles.cols(); i++){
+				            		double vCircle[] = circles.get(0,i);
+				            		if (vCircle == null)	break;
+				
+									pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
+									int radius = (int)Math.round(vCircle[2]);
+									
+									// draw the found circle
+									Core.circle(thresholdImage, pt, radius, new Scalar(255,0,0), iLineThickness);
+									Core.circle(thresholdImage, pt, 3, new Scalar(255,0,0), iLineThickness);
+				            	}
+				            }
+				            Utils.matToBitmap(thresholdImage, video);
+							
+						} else if (mode.equals(IMAGEMODE.REDHOUGHCIRCLES)) {
+							Utils.bitmapToMat(video, tmp);
+							Imgproc.cvtColor(tmp, mIntermediateMat2, Imgproc.COLOR_RGB2HSV, 4);
+							
+							Core.inRange(mIntermediateMat2, new Scalar(-2, 80, 80), new Scalar(3, 255, 255), thresholdImage); // for blue color
+				            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
+				            
+				            Mat circles = new Mat();
+							
+				            int iCannyUpperThreshold = 55;
+				            int iMinRadius = 3;
+				            int iMaxRadius = 400;
+				            int iAccumulator = 68;
+				            int iLineThickness = 3;
+				            
+				            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
+				            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
+				            		iMinRadius, iMaxRadius);
+				            
+				            
+				            
+				            if (circles.cols() > 0){
+				            	for(int i=0; i<circles.cols(); i++){
+				            		double vCircle[] = circles.get(0,i);
+				            		if (vCircle == null)	break;
+				
+									pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
+									int radius = (int)Math.round(vCircle[2]);
+									
+									// draw the found circle
+									Core.circle(mIntermediateMat2, pt, radius, new Scalar(255,255,255), iLineThickness);
+									Core.circle(mIntermediateMat2, pt, 3, new Scalar(255,255,255), iLineThickness);
+				            	}
+				            }
+				            Imgproc.cvtColor(mIntermediateMat2, tmp, Imgproc.COLOR_HSV2RGB, 0);
+							Utils.matToBitmap(tmp, video);
+						} else if (mode.equals(IMAGEMODE.REDTHRESHOLD)) {
+							Utils.bitmapToMat(video, tmp);
+							Imgproc.cvtColor(tmp, mIntermediateMat2, Imgproc.COLOR_RGB2HSV, 4);
+							
+							Core.inRange(mIntermediateMat2, new Scalar(-2, 80, 80), new Scalar(3, 255, 255), thresholdImage); // for blue color
+				            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
+				            
+				            Mat circles = new Mat();
+							
+				            int iCannyUpperThreshold = 55;
+				            int iMinRadius = 3;
+				            int iMaxRadius = 400;
+				            int iAccumulator = 68;
+				            int iLineThickness = 3;
+				            
+				            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
+				            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
+				            		iMinRadius, iMaxRadius);
+				            
+				            
+				            
+				            if (circles.cols() > 0){
+				            	for(int i=0; i<circles.cols(); i++){
+				            		double vCircle[] = circles.get(0,i);
+				            		if (vCircle == null)	break;
+				
+									pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
+									int radius = (int)Math.round(vCircle[2]);
+									
+									// draw the found circle
+									Core.circle(thresholdImage, pt, radius, new Scalar(255,0,0), iLineThickness);
+									Core.circle(thresholdImage, pt, 3, new Scalar(255,0,0), iLineThickness);
+				            	}
+				            }
+				            Imgproc.cvtColor(thresholdImage, tmp, Imgproc.COLOR_GRAY2BGR, 0);
+							Utils.matToBitmap(tmp, video);
+						}
+						canvas.drawBitmap(video, 0, 0, paint);
+						
+					}
+					
+					//canvas.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
+					//canvas.drawRect(x, y, x + 20.0f, y + 20.0f, paint);
+				} finally {
+					mImageView.unlockCanvasAndPost(canvas);
+				}
+
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// Interrupted
+				}
+			}
+		}
+
+		public void stopRendering() {
+			interrupt();
+			mRunning = false;
+		}
+
 	}
 }

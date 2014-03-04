@@ -69,7 +69,6 @@ public class MainPresenter implements Runnable {
 			@Override
 			public void flip(int pageNumber) {
 				if (pageNumber == 0) {
-					Log.d(TAG, "pageNumber == 0");
 					initDrone();
 					if(mARDrone.isConnected()) {
 						Toast.makeText(context, "Drone is successfully connected.", Toast.LENGTH_SHORT).show();
@@ -78,8 +77,13 @@ public class MainPresenter implements Runnable {
 						Toast.makeText(context, "Fail to connect Drone. Check the Wi-Fi again.", Toast.LENGTH_SHORT).show();
 					}
 				} else if (pageNumber == 1) {
-					Log.d(TAG, "pageNumber == 1");
-					view.setView(TypeView.NAVIGATINGMODE);
+					initDrone();
+					if(mARDrone.isConnected()) {
+						Toast.makeText(context, "Drone is successfully connected.", Toast.LENGTH_SHORT).show();
+						view.setView(TypeView.NAVIGATINGMODE);
+					} else {
+						Toast.makeText(context, "Fail to connect Drone. Check the Wi-Fi again.", Toast.LENGTH_SHORT).show();
+					}
 				} else if (pageNumber == 2) {
 					
 				}

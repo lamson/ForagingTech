@@ -13,11 +13,7 @@ import com.felicekarl.ardrone.managers.navdata.DroneState;
 import com.felicekarl.ardrone.managers.navdata.listeners.AttitudeListener;
 import com.felicekarl.ardrone.managers.navdata.listeners.StateListener;
 import com.felicekarl.foragingtech.ForagingTechConstraint;
-import com.felicekarl.foragingtech.listeners.DroneCommandListener;
-import com.felicekarl.foragingtech.listeners.FlipBackwardButtonListener;
-import com.felicekarl.foragingtech.listeners.FlipForwardButtonListener;
-import com.felicekarl.foragingtech.listeners.JoyStickListener;
-import com.felicekarl.foragingtech.listeners.TakePhotoListener;
+import com.felicekarl.foragingtech.listeners.*;
 import com.felicekarl.foragingtech.models.IModel;
 import com.felicekarl.foragingtech.views.IView;
 import com.felicekarl.foragingtech.views.IView.TypeView;
@@ -64,15 +60,6 @@ public class MainPresenter implements Runnable {
 	}
 	
 	private void initListeners() {
-		/* add drone command listener */
-		view.updateDroneCommandListener(new DroneCommandListener() {
-			@Override
-			public void takeOffLand() {
-				if (mARDrone.isConnected()) {
-					mARDrone.takeOff();
-				}
-			}
-		});
 		/* add flip page from menu to content */
 		view.updateFlipForwardButtonListener(new FlipForwardButtonListener() {
 			@Override
@@ -100,16 +87,8 @@ public class MainPresenter implements Runnable {
 		});
 		
 		/* add back button listener to flip page from content to menu */
-		view.updateFlipBackwardButtonListener(new FlipBackwardButtonListener() {
-			@Override
-			public void flip() {
-				if(mARDrone.isConnected())	mARDrone.disconnect();
-				view.setView(TypeView.MENU);
-			}
-		});
-		
-		/* add photo take listener */
-		view.updateTakePhotoListener(new TakePhotoListener() {
+		view.updateContentActionBarFragmentButtonListener(new ContentActionBarFragmentButtonListener() {
+			
 			@Override
 			public void takePhoto() {
 				Log.d(TAG, "takePhoto()");
@@ -139,9 +118,71 @@ public class MainPresenter implements Runnable {
 					e.printStackTrace();
 				}
 			}
+			
+			@Override
+			public void backToMenu() {
+				if(mARDrone.isConnected())	mARDrone.disconnect();
+				view.setView(TypeView.MENU);
+			}
+		});
+		
+		/* joystick listener */
+		view.updateControllerListener(new ControllerListener() {
+			@Override
+			public void setSpeedZ(int speedZ) {
+				droneSpeedZ = speedZ;
+				if(mARDrone.isConnected() && mARDrone.isFlying()) {
+					//Log.d(TAG, "droneSpeedZ: " + droneSpeedZ);
+					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
+				}
+			}
+			
+			@Override
+			public void setSpeedY(int speedY) {
+				droneSpeedX = speedY;
+				if(mARDrone.isConnected() && mARDrone.isFlying()) {
+					//Log.d(TAG, "droneSpeedX: " + droneSpeedX);
+					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
+				}
+			}
+			
+			@Override
+			public void setSpeedX(int speedX) {
+				droneSpeedY = speedX;
+				if(mARDrone.isConnected() && mARDrone.isFlying()) {
+					//Log.d(TAG, "droneSpeedY: " + droneSpeedY);
+					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
+				}
+			}
+			
+			@Override
+			public void setSpeedSpin(int speedSpin) {
+				droneSpeedSpin = speedSpin;
+				if(mARDrone.isConnected() && mARDrone.isFlying()) {
+					//Log.d(TAG, "droneSpeedSpin: " + droneSpeedSpin);
+					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
+				}
+			}
 
 			@Override
-			public void saveImage() {
+			public void takeOff() {
+				if (mARDrone.isConnected()) {
+					mARDrone.takeOff();
+				}
+			}
+
+			@Override
+			public void landing() {
+				if (mARDrone.isConnected()) {
+					mARDrone.landing();
+				}
+			}
+		});
+		
+		/* camera fragment button listener */
+		view.updateCameraFragmentButtonListener(new CameraFragmentButtonListener() {
+			@Override
+			public void saveProcessedImage() {
 				Log.d(TAG, "saveImage()");
 				BufferedOutputStream bos = null;
 				FileOutputStream fos = null;
@@ -167,59 +208,6 @@ public class MainPresenter implements Runnable {
 				} catch (IOException e) {
 					Toast.makeText(context, "Error occurs while saving Image.", Toast.LENGTH_SHORT).show();
 					e.printStackTrace();
-				}
-			}
-		});
-		
-		/* joystick listener */
-		view.updateJoyStickListener(new JoyStickListener() {
-			@Override
-			public void setSpeedZ(int speedZ) {
-				droneSpeedZ = speedZ;
-				if(mARDrone.isConnected()) {
-					//Log.d(TAG, "droneSpeedZ: " + droneSpeedZ);
-					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
-				}
-			}
-			
-			@Override
-			public void setSpeedY(int speedY) {
-				droneSpeedX = speedY;
-				if(mARDrone.isConnected()) {
-					//Log.d(TAG, "droneSpeedX: " + droneSpeedX);
-					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
-				}
-			}
-			
-			@Override
-			public void setSpeedX(int speedX) {
-				droneSpeedY = speedX;
-				if(mARDrone.isConnected()) {
-					//Log.d(TAG, "droneSpeedY: " + droneSpeedY);
-					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
-				}
-			}
-			
-			@Override
-			public void setSpeedSpin(int speedSpin) {
-				droneSpeedSpin = speedSpin;
-				if(mARDrone.isConnected()) {
-					//Log.d(TAG, "droneSpeedSpin: " + droneSpeedSpin);
-					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
-				}
-			}
-
-			@Override
-			public void takeOff() {
-				if (mARDrone.isConnected()) {
-					mARDrone.takeOff();
-				}
-			}
-
-			@Override
-			public void landing() {
-				if (mARDrone.isConnected()) {
-					mARDrone.landing();
 				}
 			}
 		});
@@ -264,6 +252,7 @@ public class MainPresenter implements Runnable {
 				if(state.isTagOn(ARDroneConstants.FLY_MASK)) {
 					//Log.d(TAG, "isFlying");
 					view.setIsFlying(true);
+					mARDrone.setIsFlying(true);
 					//mGLView.setIsFlying(true);
 //					if (mActionBarFragment != null) {
 //						mActionBarFragment.setIsFlying(true);
@@ -273,6 +262,7 @@ public class MainPresenter implements Runnable {
 					//mGLView.setIsFlying(false);
 					//Log.d(TAG, "isNotFlying");
 					view.setIsFlying(false);
+					mARDrone.setIsFlying(false);
 //					if (mActionBarFragment != null) {
 //						mActionBarFragment.setIsFlying(false);
 //						isFlying = false;

@@ -11,8 +11,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class ContentActionBarFragment extends BaseFragment implements OnClickListener, 
-		UpdateFlipBackwardButtonListener, UpdateTakePhotoListener, UpdateDroneCommandListener {
+public class ContentActionBarFragment extends BaseFragment implements OnClickListener,
+		UpdateContentActionBarFragmentButtonListener {
 	private static final String TAG = ContentActionBarFragment.class.getSimpleName();
 	
 	private Button btn_back;
@@ -23,9 +23,7 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 	private Button btn_emergency;
 	private Button btn_takephoto;
 	
-	private FlipBackwardButtonListener mFlipBackwardButtonListener;
-	private TakePhotoListener mTakePhotoListener;
-	private DroneCommandListener mDroneCommandListener;
+	private ContentActionBarFragmentButtonListener mContentActionBarFragmentButtonListener;
 	
 	private boolean isFlying;
 	
@@ -71,7 +69,8 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 		switch (v.getId()) {
 		case R.id.btn_back:
 			Log.d(TAG, "btn_back");
-			if (mFlipBackwardButtonListener != null)	mFlipBackwardButtonListener.flip();
+			if (mContentActionBarFragmentButtonListener != null)
+				mContentActionBarFragmentButtonListener.backToMenu();
 			break;
 		case R.id.btn_debug:
 			//mDebugSlideButtonListener.slide();
@@ -81,26 +80,16 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 			break;
 		case R.id.btn_takeoff:
 			//mDroneTakeOffButtonListener.toggle();
-			if (mDroneCommandListener != null)	mDroneCommandListener.takeOffLand();
 			break;
 		case R.id.btn_test:
-			if (mTakePhotoListener != null)	mTakePhotoListener.saveImage();
-//			if (!isNavigating) {
-//				mMagnetoCalibrationListener.start();
-//				isNavigating = true;
-//				Log.d(TAG, "Navigating Start");
-//			} else {
-//				mMagnetoCalibrationListener.stop();
-//				isNavigating = false;
-//				Log.d(TAG, "Navigating Stop");
-//			}
 			
 			break;
 		case R.id.btn_emergency:
 			//mDroneResetListener.resetDrone();
 			break;
 		case R.id.btn_takephoto:
-			if (mTakePhotoListener != null)	mTakePhotoListener.takePhoto();
+			if (mContentActionBarFragmentButtonListener != null)
+				mContentActionBarFragmentButtonListener.takePhoto();
 			break;
 		}
 	}
@@ -122,18 +111,15 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 	}
 
 	@Override
-	public void updateFlipBackwardButtonListener(FlipBackwardButtonListener mFlipBackwardButtonListener) {
-		this.mFlipBackwardButtonListener = mFlipBackwardButtonListener;
+	public void resetFragment() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void updateTakePhotoListener(TakePhotoListener mTakePhotoListener) {
-		this.mTakePhotoListener = mTakePhotoListener;
-	}
-
-	@Override
-	public void updateDroneCommandListener(DroneCommandListener mDroneCommandListener) {
-		this.mDroneCommandListener = mDroneCommandListener;
+	public void updateContentActionBarFragmentButtonListener(
+			ContentActionBarFragmentButtonListener mContentActionBarFragmentButtonListener) {
+		this.mContentActionBarFragmentButtonListener = mContentActionBarFragmentButtonListener;
 	}
 	
 }

@@ -1,8 +1,6 @@
 package com.felicekarl.foragingtech.views.fragments;
 
 import com.felicekarl.foragingtech.R;
-import com.felicekarl.foragingtech.listeners.FlipBackwardButtonListener;
-import com.felicekarl.foragingtech.listeners.UpdateFlipBackwardButtonListener;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,11 +8,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-public class ContentNavigatingFragment extends BaseFragment implements OnClickListener, UpdateFlipBackwardButtonListener {
+public class ContentNavigatingFragment extends BaseFragment implements OnClickListener {
 	private static final String TAG = ContentNavigatingFragment.class.getSimpleName();
 	
 	private ContentActionBarFragment mContentActionBarFragment;
-	private FlipBackwardButtonListener mFlipBackwardButtonListener;
 	
     public ContentNavigatingFragment() {
     	
@@ -37,7 +34,7 @@ public class ContentNavigatingFragment extends BaseFragment implements OnClickLi
     	/* add content actionbar fragment */
     	mContentActionBarFragment = ContentActionBarFragment.create();
     	getChildFragmentManager().beginTransaction().add(R.id.content_container, mContentActionBarFragment).commit();
-    	mContentActionBarFragment.updateFlipBackwardButtonListener(mFlipBackwardButtonListener);
+    	//mContentActionBarFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
     	
     	
     	slideUpFragment();
@@ -68,12 +65,10 @@ public class ContentNavigatingFragment extends BaseFragment implements OnClickLi
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
-	public void updateFlipBackwardButtonListener(FlipBackwardButtonListener mFlipBackwardButtonListener) {
-		this.mFlipBackwardButtonListener = mFlipBackwardButtonListener;
-		if (mContentActionBarFragment != null) {
-			mContentActionBarFragment.updateFlipBackwardButtonListener(mFlipBackwardButtonListener);
-		}
+	public void resetFragment() {
+		// TODO Auto-generated method stub
+		
 	}
 }

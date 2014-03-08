@@ -112,13 +112,13 @@ public class CommandManager2 extends CommandManager {
 			sendCommand("AT*CONFIG_IDS=" + SEQ + ",\"" + SESSION_ID + "\",\""
 					+ PROFILE_ID + "\",\"" + APPLICATION_ID + "\"" + CR);
 			sendCommand("AT*CONFIG=" + SEQ
-					+ ",\"video:max_bitrate\",\"250\"" + CR);
+					+ ",\"video:max_bitrate\",\"1000\"" + CR);
 			
 			// video codec fps
 			sendCommand("AT*CONFIG_IDS=" + SEQ + ",\"" + SESSION_ID + "\",\""
 					+ PROFILE_ID + "\",\"" + APPLICATION_ID + "\"" + CR);
 			sendCommand("AT*CONFIG=" + SEQ
-					+ ",\"video:codec_fps\",\"1\"" + CR);
+					+ ",\"video:codec_fps\",\"10\"" + CR);
 			Thread.sleep(20);
 			
 			// video codec

@@ -150,5 +150,11 @@ public class PagerFragment extends BaseFragment implements OnClickListener, Upda
     		}
 		}
     }
+
+	@Override
+	public void resetFragment() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

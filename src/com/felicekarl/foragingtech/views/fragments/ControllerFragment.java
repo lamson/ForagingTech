@@ -2,8 +2,8 @@ package com.felicekarl.foragingtech.views.fragments;
 
 import com.felicekarl.foragingtech.R;
 import com.felicekarl.foragingtech.activities.MainActivity;
-import com.felicekarl.foragingtech.listeners.JoyStickListener;
-import com.felicekarl.foragingtech.listeners.UpdateJoyStickListener;
+import com.felicekarl.foragingtech.listeners.ControllerListener;
+import com.felicekarl.foragingtech.listeners.UpdateControllerListener;
 
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
@@ -19,7 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-public class ControllerFragment extends BaseFragment implements UpdateJoyStickListener, OnClickListener {
+public class ControllerFragment extends BaseFragment implements UpdateControllerListener, OnClickListener {
 	private static final String TAG = ControllerFragment.class.getSimpleName();
 	private View controller_left_joystick;
 	private View controller_right_joystick;
@@ -29,7 +29,7 @@ public class ControllerFragment extends BaseFragment implements UpdateJoyStickLi
 	
 	private boolean isFlying;
 	
-	private JoyStickListener mJoyStickListener;
+	private ControllerListener mControllerListener;
 	
 	public ControllerFragment() {
 		isFlying = false;
@@ -145,23 +145,23 @@ public class ControllerFragment extends BaseFragment implements UpdateJoyStickLi
 							if( (y - centerY) >=0 )	{
 								// backward
 								if (MainActivity.VERBOSE) Log.d(TAG, "L-speedYRate: " + speedYRate);
-								mJoyStickListener.setSpeedY(-speedYRate);
+								mControllerListener.setSpeedY(-speedYRate);
 							}
 							else {
 								// forward
 								if (MainActivity.VERBOSE) Log.d(TAG, "L-speedYRate: " + speedYRate);
-								mJoyStickListener.setSpeedY(speedYRate);
+								mControllerListener.setSpeedY(speedYRate);
 							}
 						}else{
 							if( (x - centerX) >= 0) {
 								// right
 								if (MainActivity.VERBOSE) Log.d(TAG, "L-speedXRate: " + speedXRate);
-								mJoyStickListener.setSpeedX(-speedXRate);
+								mControllerListener.setSpeedX(-speedXRate);
 							}
 							else {
 								// left
 								if (MainActivity.VERBOSE) Log.d(TAG, "L-speedXRate: " + speedXRate);
-								mJoyStickListener.setSpeedX(speedXRate);
+								mControllerListener.setSpeedX(speedXRate);
 							}
 						}
 					} else {
@@ -176,8 +176,8 @@ public class ControllerFragment extends BaseFragment implements UpdateJoyStickLi
 				if (MainActivity.VERBOSE) Log.d(TAG, "ACTION_UP || ACTION_POINTER_UP");
 				// stop
 				if (MainActivity.VERBOSE) Log.d(TAG, "L-stop");
-				mJoyStickListener.setSpeedX(0);
-				mJoyStickListener.setSpeedY(0);
+				mControllerListener.setSpeedX(0);
+				mControllerListener.setSpeedY(0);
 				left_joystick.setVisibility(View.INVISIBLE);
 				return false;
 			}
@@ -229,23 +229,23 @@ public class ControllerFragment extends BaseFragment implements UpdateJoyStickLi
 							if( (y - centerY) >=0 )	{
 								// backward
 								if (MainActivity.VERBOSE) Log.d(TAG, "R-speedYRate: " + speedYRate);
-								mJoyStickListener.setSpeedZ(speedYRate);
+								mControllerListener.setSpeedZ(speedYRate);
 							}
 							else {
 								// forward
 								if (MainActivity.VERBOSE) Log.d(TAG, "R-speedYRate: " + speedYRate);
-								mJoyStickListener.setSpeedZ(-speedYRate);
+								mControllerListener.setSpeedZ(-speedYRate);
 							}
 						}else{
 							if( (x - centerX) >= 0) {
 								// right
 								if (MainActivity.VERBOSE) Log.d(TAG, "R-speedXRate: " + speedXRate);
-								mJoyStickListener.setSpeedSpin(-speedXRate);
+								mControllerListener.setSpeedSpin(-speedXRate);
 							}
 							else {
 								// left
 								if (MainActivity.VERBOSE) Log.d(TAG, "R-speedXRate: " + speedXRate);
-								mJoyStickListener.setSpeedSpin(speedXRate);
+								mControllerListener.setSpeedSpin(speedXRate);
 							}
 						}
 					} else {
@@ -260,8 +260,8 @@ public class ControllerFragment extends BaseFragment implements UpdateJoyStickLi
 				if (MainActivity.VERBOSE) Log.d(TAG, "ACTION_UP || ACTION_POINTER_UP");
 				// stop
 				if (MainActivity.VERBOSE) Log.d(TAG, "R-stop");
-				mJoyStickListener.setSpeedZ(0);
-				mJoyStickListener.setSpeedSpin(0);
+				mControllerListener.setSpeedZ(0);
+				mControllerListener.setSpeedSpin(0);
 				right_joystick.setVisibility(View.INVISIBLE);
 				return false;
 			}
@@ -270,8 +270,8 @@ public class ControllerFragment extends BaseFragment implements UpdateJoyStickLi
 	}
 
 	@Override
-	public void updateJoyStickListener(JoyStickListener mJoyStickListener) {
-		this.mJoyStickListener = mJoyStickListener;
+	public void updateControllerListener(ControllerListener mControllerListener) {
+		this.mControllerListener = mControllerListener;
 	}
 	
 	private class LeftJoyStickCanvasListener implements SurfaceTextureListener {
@@ -309,11 +309,17 @@ public class ControllerFragment extends BaseFragment implements UpdateJoyStickLi
 		switch (v.getId()) {
 		case R.id.btn_takeoff_land_toggle:
 			if (isFlying) {
-				mJoyStickListener.landing();
+				mControllerListener.landing();
 			} else {
-				mJoyStickListener.takeOff();
+				mControllerListener.takeOff();
 			}
 			break;
 		}
+	}
+
+	@Override
+	public void resetFragment() {
+		// TODO Auto-generated method stub
+		
 	}
 }

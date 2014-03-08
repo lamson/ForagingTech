@@ -41,4 +41,10 @@ public class SplashFragment extends BaseFragment{
 	protected void disableEditText() {
 		// TODO Auto-generated method stub
 	}
+
+	@Override
+	public void resetFragment() {
+		// TODO Auto-generated method stub
+		
+	}
 }

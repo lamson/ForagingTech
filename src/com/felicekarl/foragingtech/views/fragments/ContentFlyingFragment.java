@@ -10,13 +10,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 public class ContentFlyingFragment extends BaseFragment implements OnClickListener, 
-		UpdateFlipBackwardButtonListener, UpdateTakePhotoListener, UpdateDroneCommandListener {
+		UpdateContentActionBarFragmentButtonListener {
 	private static final String TAG = ContentFlyingFragment.class.getSimpleName();
 	
 	private ContentActionBarFragment mContentActionBarFragment;
-	private FlipBackwardButtonListener mFlipBackwardButtonListener;
-	private TakePhotoListener mTakePhotoListener;
-	private DroneCommandListener mDroneCommandListener;
+	private ContentActionBarFragmentButtonListener mContentActionBarFragmentButtonListener;
 	
     public ContentFlyingFragment() {
     	
@@ -40,9 +38,7 @@ public class ContentFlyingFragment extends BaseFragment implements OnClickListen
     	mContentActionBarFragment = ContentActionBarFragment.create();
     	getChildFragmentManager().beginTransaction().add(R.id.content_container, mContentActionBarFragment).commit();
     	/* update listeners to actionbar fragment */
-    	mContentActionBarFragment.updateFlipBackwardButtonListener(mFlipBackwardButtonListener);
-    	mContentActionBarFragment.updateTakePhotoListener(mTakePhotoListener);
-    	mContentActionBarFragment.updateDroneCommandListener(mDroneCommandListener);
+    	mContentActionBarFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
     	
     	
     	slideUpFragment();
@@ -75,26 +71,16 @@ public class ContentFlyingFragment extends BaseFragment implements OnClickListen
 	}
 
 	@Override
-	public void updateFlipBackwardButtonListener(FlipBackwardButtonListener mFlipBackwardButtonListener) {
-		this.mFlipBackwardButtonListener = mFlipBackwardButtonListener;
-		if (mContentActionBarFragment != null) {
-			mContentActionBarFragment.updateFlipBackwardButtonListener(this.mFlipBackwardButtonListener);
-		}
+	public void resetFragment() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void updateTakePhotoListener(TakePhotoListener mTakePhotoListener) {
-		this.mTakePhotoListener = mTakePhotoListener;
-		if (mContentActionBarFragment != null) {
-			mContentActionBarFragment.updateTakePhotoListener(this.mTakePhotoListener);
-		}
-	}
-
-	@Override
-	public void updateDroneCommandListener(DroneCommandListener mDroneCommandListener) {
-		this.mDroneCommandListener = mDroneCommandListener;
-		if (mContentActionBarFragment != null) {
-			mContentActionBarFragment.updateDroneCommandListener(mDroneCommandListener);
-		}
+	public void updateContentActionBarFragmentButtonListener(
+			ContentActionBarFragmentButtonListener mContentActionBarFragmentButtonListener) {
+		this.mContentActionBarFragmentButtonListener = mContentActionBarFragmentButtonListener;
+		if (mContentActionBarFragment != null)
+			mContentActionBarFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
 	}
 }

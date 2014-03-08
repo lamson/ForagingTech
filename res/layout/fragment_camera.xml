@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="top|right"
-    android:paddingTop="60dp"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingTop="60dp" >
 
     <RelativeLayout
         android:id="@+id/camera_texture_view_wrappter"
@@ -17,32 +17,47 @@
         android:padding="10dp" >
 
         <TextureView
-            android:id="@+id/camera_texture_view"            
-            android:layout_width="match_parent"
-    		android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/camera_image_view_wrappter"
-        android:layout_width="340dp"
-        android:layout_height="200dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/camera_texture_view_wrappter"
-        android:background="#6a00ff"
-        android:orientation="vertical"
-        android:padding="10dp" >
-
-        <TextureView
-            android:id="@+id/camera_image_view"
+            android:id="@+id/camera_texture_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/camera_image_view_wrappter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/camera_texture_view_wrappter"
+        android:background="#6a00ff"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp" >
+
+        <TextureView
+            android:id="@+id/camera_image_view"
+            android:layout_width="320dp"
+            android:layout_height="180dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true" />
+
+        <Button
+            android:id="@+id/btn_image_save"
+            style="@style/FooterPagerButton"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/camera_image_view"
+            android:layout_centerHorizontal="true"
+            android:drawableLeft="@drawable/btn_image_save"
+            android:text="Save Processed Image"
+            android:textSize="25sp" />
+
+    </RelativeLayout>
+
     <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/camera_texture_view_wrappter"
@@ -53,28 +68,28 @@
         <Button
             android:id="@+id/btn_image_mode1"
             style="@style/FooterPagerButton"
-            android:drawableLeft="@drawable/btn_play_pressed"
+            android:drawableLeft="@drawable/btn_mode_off"
             android:text="Canny Processing"
             android:textSize="25sp" />
 
         <Button
             android:id="@+id/btn_image_mode2"
             style="@style/FooterPagerButton"
-            android:drawableLeft="@drawable/btn_play_unpressed"
+            android:drawableLeft="@drawable/btn_mode_off"
             android:text="Hough Circles"
             android:textSize="25sp" />
 
         <Button
             android:id="@+id/btn_image_mode3"
             style="@style/FooterPagerButton"
-            android:drawableLeft="@drawable/btn_play_unpressed"
+            android:drawableLeft="@drawable/btn_mode_off"
             android:text="Hough Circles (Red)"
             android:textSize="25sp" />
 
         <Button
             android:id="@+id/btn_image_mode4"
             style="@style/FooterPagerButton"
-            android:drawableLeft="@drawable/btn_play_unpressed"
+            android:drawableLeft="@drawable/btn_mode_off"
             android:text="Threshold (Red)"
             android:textSize="25sp" />
     </LinearLayout>

@@ -2,15 +2,9 @@ package com.felicekarl.foragingtech.views;
 
 import com.felicekarl.foragingtech.R;
 import com.felicekarl.foragingtech.activities.MainActivity;
-import com.felicekarl.foragingtech.listeners.DroneCommandListener;
-import com.felicekarl.foragingtech.listeners.FlipBackwardButtonListener;
-import com.felicekarl.foragingtech.listeners.FlipForwardButtonListener;
-import com.felicekarl.foragingtech.listeners.JoyStickListener;
-import com.felicekarl.foragingtech.listeners.TakePhotoListener;
+import com.felicekarl.foragingtech.listeners.*;
 import com.felicekarl.foragingtech.views.fragments.*;
 import com.felicekarl.foragingtech.views.fragments.BaseFragment.DIRECTION;
-import com.felicekarl.foragingtech.views.fragments.CameraFragment.IMAGEMODE;
-
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -76,6 +70,10 @@ public class MainView implements IView {
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		} else if(curTypeView.equals(TypeView.MENU) && type.equals(TypeView.FLYINGMODE)) {
 			curTypeView = TypeView.FLYINGMODE;
+			mCameraFragment.setCameraFullScreen();
+			mCameraFragment.setFrameColor("#f0a30a");
+			mCameraFragment.resetFragment();
+			
 			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(true, true, DIRECTION.TOP);
@@ -83,21 +81,18 @@ public class MainView implements IView {
 			mCameraFragment.toggle(true, true, DIRECTION.TOP);
 			mControllerFragment.toggle(true, true, DIRECTION.TOP);
 			
-			mCameraFragment.setCameraFullScreen();
-			mCameraFragment.setFrameColor("#f0a30a");
-			mCameraFragment.setImageMode(IMAGEMODE.CANNY);
+			
 		} else if(curTypeView.equals(TypeView.MENU) && type.equals(TypeView.NAVIGATINGMODE)) {
 			curTypeView = TypeView.NAVIGATINGMODE;
+			mCameraFragment.setCameraSmallScreen();
+			mCameraFragment.setFrameColor("#6a00ff");
+			
 			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(false, false, DIRECTION.TOP);
 			mContentNavigatingFragment.toggle(true, true, DIRECTION.TOP);
 			mCameraFragment.toggle(true, true, DIRECTION.TOP);
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
-			
-			mCameraFragment.setCameraSmallScreen();
-			
-			mCameraFragment.setFrameColor("#6a00ff");
 		} else if(curTypeView.equals(TypeView.FLYINGMODE) && type.equals(TypeView.MENU)) {
 			curTypeView = TypeView.MENU;
 			mPagerFragment.toggle(true, true, DIRECTION.BOTTOM);
@@ -122,24 +117,6 @@ public class MainView implements IView {
 	public void updateFlipForwardButtonListener(FlipForwardButtonListener mFlipForwardButtonListener) {
 		mPagerFragment.updateFlipForwardButtonListener(mFlipForwardButtonListener);
 	}
-
-	@Override
-	public void updateFlipBackwardButtonListener(FlipBackwardButtonListener mFlipBackwardButtonListener) {
-		mContentFlyingFragment.updateFlipBackwardButtonListener(mFlipBackwardButtonListener);
-		mContentNavigatingFragment.updateFlipBackwardButtonListener(mFlipBackwardButtonListener);
-	}
-	
-	@Override
-	public void updateTakePhotoListener(TakePhotoListener mTakePhotoListener) {
-		mContentFlyingFragment.updateTakePhotoListener(mTakePhotoListener);
-		// TODO: add listener for navigating mode
-	}
-	
-	@Override
-	public void updateDroneCommandListener(DroneCommandListener mDroneCommandListener) {
-		mContentFlyingFragment.updateDroneCommandListener(mDroneCommandListener);
-		// TODO: add listener for navigating mode
-	}
 	
 	@Override
 	public Surface getCameraSurface() {
@@ -160,12 +137,23 @@ public class MainView implements IView {
 	}
 
 	@Override
-	public void updateJoyStickListener(JoyStickListener mJoyStickListener) {
-		mControllerFragment.updateJoyStickListener(mJoyStickListener);
+	public void updateControllerListener(ControllerListener mControllerListener) {
+		mControllerFragment.updateControllerListener(mControllerListener);
 	}
 
 	@Override
 	public void setIsFlying(boolean isFlying) {
 		mControllerFragment.setIsFlying(isFlying);
+	}
+
+	@Override
+	public void updateCameraFragmentButtonListener(CameraFragmentButtonListener mCameraFragmentButtonListener) {
+		mCameraFragment.updateCameraFragmentButtonListener(mCameraFragmentButtonListener);
+	}
+
+	@Override
+	public void updateContentActionBarFragmentButtonListener(
+			ContentActionBarFragmentButtonListener mContentActionBarFragmentButtonListener) {
+		mContentFlyingFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
 	}
 }

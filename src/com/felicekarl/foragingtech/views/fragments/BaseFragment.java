@@ -96,4 +96,6 @@ public abstract class BaseFragment extends Fragment {
 	public enum DIRECTION {
 		TOP, BOTTOM, LEFT, RIGHT
 	}
+	
+	public abstract void resetFragment();
 }

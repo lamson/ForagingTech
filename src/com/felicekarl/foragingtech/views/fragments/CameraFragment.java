@@ -10,6 +10,8 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import com.felicekarl.foragingtech.R;
+import com.felicekarl.foragingtech.listeners.CameraFragmentButtonListener;
+import com.felicekarl.foragingtech.listeners.UpdateCameraFragmentButtonListener;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -32,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class CameraFragment extends BaseFragment implements TextureView.SurfaceTextureListener,
-		OnClickListener {
+		OnClickListener, UpdateCameraFragmentButtonListener {
 	private static final String TAG = CameraFragment.class.getSimpleName();
 	
 	private TextureView mTextureView;
@@ -45,6 +47,9 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	private Button btn_image_mode2;
 	private Button btn_image_mode3;
 	private Button btn_image_mode4;
+	private Button btn_image_save;
+	
+	private CameraFragmentButtonListener mCameraFragmentButtonListener;
 	
 	private RenderThread mThread;
 	
@@ -102,6 +107,8 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
     	btn_image_mode3.setOnClickListener(this);
     	btn_image_mode4 = (Button) view.findViewById(R.id.btn_image_mode4);
     	btn_image_mode4.setOnClickListener(this);
+    	btn_image_save = (Button) view.findViewById(R.id.btn_image_save);
+    	btn_image_save.setOnClickListener(this);
     	slideUpFragment();
     	
     	return view;
@@ -183,52 +190,55 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	}
 	
 	public void setFrameColor(String color) {
-		ViewGroup.LayoutParams params = camera_texture_view_wrappter.getLayoutParams();
+		//ViewGroup.LayoutParams params = camera_texture_view_wrappter.getLayoutParams();
 		camera_texture_view_wrappter.setBackgroundColor(Color.parseColor(color));
 		camera_image_view_wrappter.setBackgroundColor(Color.parseColor(color));
 	}
 
 	@Override
 	public void onClick(View v) {
-		Drawable icon_pressed= getActivity().getResources().getDrawable(R.drawable.btn_play_pressed);
-		icon_pressed.setBounds(0, 0, 53, 53);
-		Drawable icon_unpressed= getActivity().getResources().getDrawable(R.drawable.btn_play_unpressed);
-		icon_unpressed.setBounds(0, 0, 53, 53);
+		Drawable mode_on= getActivity().getResources().getDrawable(R.drawable.btn_mode_on);
+		mode_on.setBounds(0, 0, 40, 40);
+		Drawable mode_off= getActivity().getResources().getDrawable(R.drawable.btn_mode_off);
+		mode_off.setBounds(0, 0, 40, 40);
 		switch (v.getId()) {
 		case R.id.btn_image_mode1:
 			mode = IMAGEMODE.CANNY;
-			btn_image_mode1.setCompoundDrawables(icon_pressed, null, null, null);
-			btn_image_mode2.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode3.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode4.setCompoundDrawables(icon_unpressed, null, null, null);
+			btn_image_mode1.setCompoundDrawables(mode_on, null, null, null);
+			btn_image_mode2.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode3.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode4.setCompoundDrawables(mode_off, null, null, null);
 			break;
 		case R.id.btn_image_mode2:
 			mode = IMAGEMODE.HOUGHCIRCLES;
-			btn_image_mode1.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode2.setCompoundDrawables(icon_pressed, null, null, null);
-			btn_image_mode3.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode4.setCompoundDrawables(icon_unpressed, null, null, null);
+			btn_image_mode1.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode2.setCompoundDrawables(mode_on, null, null, null);
+			btn_image_mode3.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode4.setCompoundDrawables(mode_off, null, null, null);
 			break;
 		case R.id.btn_image_mode3:
 			mode = IMAGEMODE.REDHOUGHCIRCLES;
-			btn_image_mode1.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode2.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode3.setCompoundDrawables(icon_pressed, null, null, null);
-			btn_image_mode4.setCompoundDrawables(icon_unpressed, null, null, null);
+			btn_image_mode1.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode2.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode3.setCompoundDrawables(mode_on, null, null, null);
+			btn_image_mode4.setCompoundDrawables(mode_off, null, null, null);
 			break;
 		case R.id.btn_image_mode4:
 			mode = IMAGEMODE.REDTHRESHOLD;
-			btn_image_mode1.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode2.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode3.setCompoundDrawables(icon_unpressed, null, null, null);
-			btn_image_mode4.setCompoundDrawables(icon_pressed, null, null, null);
+			btn_image_mode1.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode2.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode3.setCompoundDrawables(mode_off, null, null, null);
+			btn_image_mode4.setCompoundDrawables(mode_on, null, null, null);
+			break;
+		case R.id.btn_image_save:
+			if (mCameraFragmentButtonListener != null)
+				mCameraFragmentButtonListener.saveProcessedImage();
 			break;
 		}
 	}
 	
 	
 	private class CanvasListener implements SurfaceTextureListener {
-
 		@Override
 		public void onSurfaceTextureAvailable(SurfaceTexture surface,
 				int width, int height) {
@@ -270,16 +280,6 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 
 		@Override
 		public void run() {
-//			Paint paint = new Paint();
-//			paint.setAntiAlias(true);
-//			paint.setFilterBitmap(true);
-//			paint.setDither(true);
-			
-			
-//			mIntermediateMat = new Mat(width, height, CvType.CV_8UC4);
-//			mIntermediateMat2 = new Mat(width, height, CvType.CV_8UC1);
-//			thresholdImage = new Mat(width, height, CvType.CV_8UC1);
-
 			while (mRunning && !Thread.interrupted()) {
 				if (video != null && !video.isRecycled()) {
 					final Canvas canvas = mImageView.lockCanvas(null);
@@ -305,7 +305,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 							
 							
 							Utils.bitmapToMat(video, sourceMat);
-							Imgproc.cvtColor(sourceMat, thresholdMat, Imgproc.COLOR_RGB2GRAY, 2);
+							Imgproc.cvtColor(sourceMat, thresholdMat, Imgproc.COLOR_RGB2GRAY, 4);
 				            Imgproc.GaussianBlur(thresholdMat, thresholdMat, new Size(9, 9), 2, 2);
 				            
 				            Mat circles = new Mat();
@@ -350,7 +350,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 				            
 				            Mat circles = new Mat();
 							
-				            int iCannyUpperThreshold = 55;
+				            int iCannyUpperThreshold = 30;
 				            int iMinRadius = 3;
 				            int iMaxRadius = 400;
 				            int iAccumulator = 50;
@@ -396,7 +396,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 				            
 				            Mat circles = new Mat();
 							
-				            int iCannyUpperThreshold = 55;
+				            int iCannyUpperThreshold = 30;
 				            int iMinRadius = 3;
 				            int iMaxRadius = 400;
 				            int iAccumulator = 50;
@@ -434,9 +434,6 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 						if (video != null)	video.recycle();
 						mImageView.unlockCanvasAndPost(canvas);
 					}
-					
-					//canvas.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
-					//canvas.drawRect(x, y, x + 20.0f, y + 20.0f, paint);
 				} else {
 					try {
 						Thread.sleep(50);
@@ -452,5 +449,27 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 			mRunning = false;
 		}
 
+	}
+
+
+
+	@Override
+	public void resetFragment() {
+		// reset Image Processing Mode as Canny
+		mode = IMAGEMODE.CANNY;
+		Drawable mode_on= getActivity().getResources().getDrawable(R.drawable.btn_mode_on);
+		mode_on.setBounds(0, 0, 40, 40);
+		Drawable mode_off= getActivity().getResources().getDrawable(R.drawable.btn_mode_off);
+		mode_off.setBounds(0, 0, 40, 40);
+		btn_image_mode1.setCompoundDrawables(mode_on, null, null, null);
+		btn_image_mode2.setCompoundDrawables(mode_off, null, null, null);
+		btn_image_mode3.setCompoundDrawables(mode_off, null, null, null);
+		btn_image_mode4.setCompoundDrawables(mode_off, null, null, null);
+	}
+
+	@Override
+	public void updateCameraFragmentButtonListener(
+			CameraFragmentButtonListener mCameraFragmentButtonListener) {
+		this.mCameraFragmentButtonListener = mCameraFragmentButtonListener; 
 	}
 }

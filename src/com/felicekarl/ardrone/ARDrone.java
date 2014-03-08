@@ -53,6 +53,7 @@ public class ARDrone implements ARDroneInterface {
 	
 	// status
 	private boolean isConnected = false;
+	private boolean isFlying = false;
 
 	public ARDrone() {
 		this(ARDroneConstants.IP_ADDRESS, null);
@@ -73,6 +74,14 @@ public class ARDrone implements ARDroneInterface {
 	
 	public boolean isConnected() {
 		return isConnected;
+	}
+	
+	public boolean isFlying() {
+		return isFlying;
+	}
+	
+	public void setIsFlying(boolean isFlying) {
+		this.isFlying =  isFlying;
 	}
 	
 	public static void error(String message, Object obj) {

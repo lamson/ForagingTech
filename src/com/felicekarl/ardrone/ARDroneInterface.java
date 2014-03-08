@@ -21,6 +21,7 @@ UpdateBatteryListener, UpdateGpsListener, UpdateMagnetoListener, UpdateStateList
 	public void landing();
 	public void takeOff();
 	public void reset();
+	public void move3D(int speedX, int speedY, int speedZ, int speedSpin);
 	
 	public enum ARDroneVersion {
 		ARDRONE1, ARDRONE2

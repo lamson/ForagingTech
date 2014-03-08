@@ -1,8 +1,11 @@
 package com.felicekarl.foragingtech.listeners;
 
 public interface JoyStickListener {
-	public void setSpeedX(float speedX);
-	public void setSpeedY(float speedY);
-	public void setSpeedZ(float speedZ);
-	public void setSpeedSpin(float speedSpin);
+	public void setSpeedX(int speedX);
+	public void setSpeedY(int speedY);
+	public void setSpeedZ(int speedZ);
+	public void setSpeedSpin(int speedSpin);
+	
+	public void takeOff();
+	public void landing();
 }

@@ -231,6 +231,12 @@ public class ARDrone implements ARDroneInterface {
 	public void reset() {
 		if (commandManager != null)	commandManager.reset();
 	}
+	
+	@Override
+	public void move3D(int speedX, int speedY, int speedZ, int speedSpin) {
+		if (commandManager != null)
+			commandManager.move3D(speedX, speedY, speedZ, speedSpin);
+	}
 
 	@Override
 	public void updateAttitudeListener(AttitudeListener mAttitudeListener) {

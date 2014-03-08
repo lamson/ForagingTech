@@ -40,12 +40,21 @@ public class MainPresenter implements Runnable {
 	private Thread thread;
 	
 	private ARDrone mARDrone;
+	private int droneSpeedX;
+	private int droneSpeedY;
+	private int droneSpeedZ;
+	private int droneSpeedSpin;
 	
 
 	public MainPresenter(Context context, IView view, IModel model){
 		this.context = context;
 		this.view = view;
 		this.model = model;
+		
+		droneSpeedX = 0;
+		droneSpeedY = 0;
+		droneSpeedZ = 0;
+		droneSpeedSpin = 0;
 		
 		initListeners();
 		
@@ -165,23 +174,53 @@ public class MainPresenter implements Runnable {
 		/* joystick listener */
 		view.updateJoyStickListener(new JoyStickListener() {
 			@Override
-			public void setSpeedZ(float speedZ) {
-				Log.d(TAG, "speedZ: " + speedZ);
+			public void setSpeedZ(int speedZ) {
+				droneSpeedZ = speedZ;
+				if(mARDrone.isConnected()) {
+					//Log.d(TAG, "droneSpeedZ: " + droneSpeedZ);
+					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
+				}
 			}
 			
 			@Override
-			public void setSpeedY(float speedY) {
-				Log.d(TAG, "speedY: " + speedY);
+			public void setSpeedY(int speedY) {
+				droneSpeedX = speedY;
+				if(mARDrone.isConnected()) {
+					//Log.d(TAG, "droneSpeedX: " + droneSpeedX);
+					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
+				}
 			}
 			
 			@Override
-			public void setSpeedX(float speedX) {
-				Log.d(TAG, "speedX: " + speedX);
+			public void setSpeedX(int speedX) {
+				droneSpeedY = speedX;
+				if(mARDrone.isConnected()) {
+					//Log.d(TAG, "droneSpeedY: " + droneSpeedY);
+					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
+				}
 			}
 			
 			@Override
-			public void setSpeedSpin(float speedSpin) {
-				Log.d(TAG, "speedSpin: " + speedSpin);
+			public void setSpeedSpin(int speedSpin) {
+				droneSpeedSpin = speedSpin;
+				if(mARDrone.isConnected()) {
+					//Log.d(TAG, "droneSpeedSpin: " + droneSpeedSpin);
+					mARDrone.move3D(droneSpeedX, droneSpeedY, droneSpeedZ, droneSpeedSpin);
+				}
+			}
+
+			@Override
+			public void takeOff() {
+				if (mARDrone.isConnected()) {
+					mARDrone.takeOff();
+				}
+			}
+
+			@Override
+			public void landing() {
+				if (mARDrone.isConnected()) {
+					mARDrone.landing();
+				}
 			}
 		});
 	}
@@ -224,6 +263,7 @@ public class MainPresenter implements Runnable {
 			public void stateChanged(DroneState state) {
 				if(state.isTagOn(ARDroneConstants.FLY_MASK)) {
 					//Log.d(TAG, "isFlying");
+					view.setIsFlying(true);
 					//mGLView.setIsFlying(true);
 //					if (mActionBarFragment != null) {
 //						mActionBarFragment.setIsFlying(true);
@@ -232,6 +272,7 @@ public class MainPresenter implements Runnable {
 				} else {
 					//mGLView.setIsFlying(false);
 					//Log.d(TAG, "isNotFlying");
+					view.setIsFlying(false);
 //					if (mActionBarFragment != null) {
 //						mActionBarFragment.setIsFlying(false);
 //						isFlying = false;

@@ -297,7 +297,7 @@ public abstract class CommandManager extends AbstractManager {
 	}
 	
 	public void move3D(int speedX, int speedY, int speedZ, int speedSpin) {
-		int maxSpeed = 30;
+		int maxSpeed = 100;
 		if (speedX > maxSpeed)
 			speedX = maxSpeed;
 		else if (speedX < -maxSpeed)

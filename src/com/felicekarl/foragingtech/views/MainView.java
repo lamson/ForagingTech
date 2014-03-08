@@ -163,4 +163,9 @@ public class MainView implements IView {
 	public void updateJoyStickListener(JoyStickListener mJoyStickListener) {
 		mControllerFragment.updateJoyStickListener(mJoyStickListener);
 	}
+
+	@Override
+	public void setIsFlying(boolean isFlying) {
+		mControllerFragment.setIsFlying(isFlying);
+	}
 }

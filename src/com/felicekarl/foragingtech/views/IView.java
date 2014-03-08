@@ -7,7 +7,7 @@ import android.view.Surface;
 import com.felicekarl.foragingtech.listeners.*;
 
 public interface IView extends UpdateFlipForwardButtonListener, UpdateFlipBackwardButtonListener, 
-		UpdateTakePhotoListener, UpdateDroneCommandListener {
+		UpdateTakePhotoListener, UpdateDroneCommandListener, UpdateJoyStickListener {
 	public void setView(TypeView type);
 	public Bitmap getCameraBitmap();
 	public Bitmap getImageBitmap();

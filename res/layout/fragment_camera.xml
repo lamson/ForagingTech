@@ -43,43 +43,40 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/camera_image_view_wrappter"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/camera_image_view_wrappter"
-        android:orientation="vertical" >
-        
-        <Button
-	        android:id="@+id/btn_image_mode1"
-	        style="@style/FooterPagerButton"
-	        android:textSize="25sp"
-	        android:drawableLeft="@drawable/btn_play_pressed"
-	        android:text="Canny Processing" />
-        
-        <Button
-	        android:id="@+id/btn_image_mode2"
-	        style="@style/FooterPagerButton"
-	        android:textSize="25sp"
-	        android:drawableLeft="@drawable/btn_play_unpressed"
-	        android:text="Hough Circles" />
-        
-        <Button
-	        android:id="@+id/btn_image_mode3"
-	        style="@style/FooterPagerButton"
-	        android:textSize="25sp"
-	        android:drawableLeft="@drawable/btn_play_unpressed"
-	        android:text="Hough Circles (Red)" />
-        
-        <Button
-	        android:id="@+id/btn_image_mode4"
-	        style="@style/FooterPagerButton"
-	        android:textSize="25sp"
-	        android:drawableLeft="@drawable/btn_play_unpressed"
-	        android:text="Threshold (Red)" />
+        android:layout_alignTop="@+id/camera_texture_view_wrappter"
+        android:layout_toLeftOf="@+id/camera_image_view_wrappter"
+        android:orientation="vertical"
+        android:padding="10dp" >
 
+        <Button
+            android:id="@+id/btn_image_mode1"
+            style="@style/FooterPagerButton"
+            android:drawableLeft="@drawable/btn_play_pressed"
+            android:text="Canny Processing"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/btn_image_mode2"
+            style="@style/FooterPagerButton"
+            android:drawableLeft="@drawable/btn_play_unpressed"
+            android:text="Hough Circles"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/btn_image_mode3"
+            style="@style/FooterPagerButton"
+            android:drawableLeft="@drawable/btn_play_unpressed"
+            android:text="Hough Circles (Red)"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/btn_image_mode4"
+            style="@style/FooterPagerButton"
+            android:drawableLeft="@drawable/btn_play_unpressed"
+            android:text="Threshold (Red)"
+            android:textSize="25sp" />
     </LinearLayout>
 
 </RelativeLayout>

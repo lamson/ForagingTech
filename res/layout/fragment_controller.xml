@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="top|right"
+    android:paddingTop="60dp"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/controller_left_joystick_wrapper"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" >
+
+        <LinearLayout
+            android:id="@+id/controller_left_joystick"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="75dp"
+            android:orientation="vertical" />
+
+        <ImageView
+            android:layout_width="150dp"
+        	android:layout_height="150dp"
+        	android:layout_marginLeft="75dp"
+        	android:layout_marginRight="75dp"
+        	android:layout_marginTop="75dp"
+        	android:layout_marginBottom="75dp"
+            android:src="@drawable/joystick_halo" />
+
+        <ImageView
+            android:id="@+id/left_joystick"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignLeft="@+id/controller_left_joystick"
+            android:layout_alignTop="@+id/controller_left_joystick"
+            android:src="@drawable/joystick_manuel" />
+
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/controller_right_joystick_wrapper"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" >
+
+        <LinearLayout
+            android:id="@+id/controller_right_joystick"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="75dp"
+            android:orientation="vertical" />
+        
+        <ImageView
+            android:layout_width="150dp"
+        	android:layout_height="150dp"
+        	android:layout_marginLeft="75dp"
+        	android:layout_marginRight="75dp"
+        	android:layout_marginTop="75dp"
+        	android:layout_marginBottom="75dp"
+            android:src="@drawable/joystick_halo" />
+
+        <ImageView
+            android:id="@+id/right_joystick"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignLeft="@+id/controller_right_joystick"
+            android:layout_alignTop="@+id/controller_right_joystick"
+            android:src="@drawable/joystick_manuel" />
+        
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/controller_menu_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp" >
+
+        <LinearLayout
+            android:id="@+id/controller_menu"
+            android:layout_width="300dp"
+        	android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical" >
+            <Button
+			    android:id="@+id/btn_emergency"
+			    style="@style/ActionBarEmergencyButton"
+			    android:layout_gravity="top|center"
+			    android:paddingLeft="40dp"
+			    android:text="@string/emergency" />
+            
+            <Button
+                android:id="@+id/btn_takeoff_land_toggle"
+                style="@style/FooterPagerButton"
+                android:layout_gravity="center"
+                android:drawableLeft="@drawable/btn_takeoff_unpressed"
+                android:text="Take Off"
+                android:paddingRight="10dp"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

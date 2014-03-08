@@ -145,14 +145,20 @@ public class VideoManager2 extends VideoManager {
         	        //Log.v(TAG, "We can't use this buffer but render it due to the API limit, " + buffer);
         	        boolean doRender = true;
         	        decoder.releaseOutputBuffer(outIndex, doRender);
-        	        while (info.presentationTimeUs / 500 > System.currentTimeMillis() - startMs) {
-        	            try {
-        	                Thread.sleep(10);
-        	            } catch (InterruptedException e) {
-        	                e.printStackTrace();
-        	                break;
-        	            }
-        	        }
+        	        try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+//        	        while (info.presentationTimeUs / 500 > System.currentTimeMillis() - startMs) {
+//        	            try {
+//        	                Thread.sleep(10);
+//        	            } catch (InterruptedException e) {
+//        	                e.printStackTrace();
+//        	                break;
+//        	            }
+//        	        }
 //        	        if (doRender) {
 //        	        	outputSurface.awaitNewImage();
 //                        outputSurface.drawImage(true);

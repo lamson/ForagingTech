@@ -16,6 +16,7 @@ import com.felicekarl.foragingtech.ForagingTechConstraint;
 import com.felicekarl.foragingtech.listeners.DroneCommandListener;
 import com.felicekarl.foragingtech.listeners.FlipBackwardButtonListener;
 import com.felicekarl.foragingtech.listeners.FlipForwardButtonListener;
+import com.felicekarl.foragingtech.listeners.JoyStickListener;
 import com.felicekarl.foragingtech.listeners.TakePhotoListener;
 import com.felicekarl.foragingtech.models.IModel;
 import com.felicekarl.foragingtech.views.IView;
@@ -28,7 +29,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class MainPresenter implements Runnable {
-	@SuppressWarnings("unused")
 	private static final String TAG = MainPresenter.class.getSimpleName();
 	
 	private static final int SPLASH_TIME = 2000;
@@ -89,6 +89,7 @@ public class MainPresenter implements Runnable {
 				}
 			}
 		});
+		
 		/* add back button listener to flip page from content to menu */
 		view.updateFlipBackwardButtonListener(new FlipBackwardButtonListener() {
 			@Override
@@ -97,6 +98,7 @@ public class MainPresenter implements Runnable {
 				view.setView(TypeView.MENU);
 			}
 		});
+		
 		/* add photo take listener */
 		view.updateTakePhotoListener(new TakePhotoListener() {
 			@Override
@@ -157,6 +159,29 @@ public class MainPresenter implements Runnable {
 					Toast.makeText(context, "Error occurs while saving Image.", Toast.LENGTH_SHORT).show();
 					e.printStackTrace();
 				}
+			}
+		});
+		
+		/* joystick listener */
+		view.updateJoyStickListener(new JoyStickListener() {
+			@Override
+			public void setSpeedZ(float speedZ) {
+				Log.d(TAG, "speedZ: " + speedZ);
+			}
+			
+			@Override
+			public void setSpeedY(float speedY) {
+				Log.d(TAG, "speedY: " + speedY);
+			}
+			
+			@Override
+			public void setSpeedX(float speedX) {
+				Log.d(TAG, "speedX: " + speedX);
+			}
+			
+			@Override
+			public void setSpeedSpin(float speedSpin) {
+				Log.d(TAG, "speedSpin: " + speedSpin);
 			}
 		});
 	}
@@ -226,6 +251,7 @@ public class MainPresenter implements Runnable {
 				}
 			}
 		});
+		
 		/* Add Drone Attitude Listener */
 		mARDrone.updateAttitudeListener(new AttitudeListener() {
 			@Override
@@ -235,7 +261,7 @@ public class MainPresenter implements Runnable {
 		});
 		
 		mARDrone.start();
-		Log.d(TAG, "ARDrone is started.");
+		Log.d(TAG, "ARDrone listeners are registered.");
 		return true;
 	}
 

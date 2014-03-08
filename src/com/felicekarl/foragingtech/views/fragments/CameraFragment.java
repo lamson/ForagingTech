@@ -46,17 +46,17 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	private Button btn_image_mode3;
 	private Button btn_image_mode4;
 	
-	private int mSurfaceWidth;
-	private int mSurfaceHeight;
-	
 	private RenderThread mThread;
 	
-	private Bitmap videoSource;
+	private Bitmap video;
+	private long startMs;
+	private int imageWidth;
+	private int imageHeight;
 	// opencv variables
-	private Mat tmp;
-	private Mat mIntermediateMat, mIntermediateMat2;
-	private Mat thresholdImage;
-	private Mat circles;
+//	private Mat tmp;
+//	private Mat mIntermediateMat, mIntermediateMat2;
+//	private Mat thresholdImage;
+//	private Mat circles;
 	private Point pt;
 	
 	private Object mFrameSyncObject = new Object();     // guards mFrameAvailable
@@ -116,10 +116,6 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
     }
     
     public Bitmap getProcessedImage() {
-//    	mImageView.buildDrawingCache();
-//    	Bitmap bmp = Bitmap.createBitmap(mImageView.getDrawingCache());
-//    	mImageView.destroyDrawingCache();
-//    	return bmp;
     	return mImageView.getBitmap();
     }
     
@@ -143,8 +139,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
 		mSurfaceTexture = surface;
     	mSurface = new Surface(mSurfaceTexture);
-    	mSurfaceWidth = width;
-    	mSurfaceHeight = height;
+    	startMs = System.currentTimeMillis();
 	}
 
 	@Override
@@ -155,26 +150,32 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 
 	@Override
 	public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-		Log.d(TAG, "surface width: " + width + " | height: " + height);
-
+		
 	}
 
 	@Override
 	public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-		videoSource = mTextureView.getBitmap();
-		
+		if ( (System.currentTimeMillis() - startMs) > 50 ) {
+			video = mTextureView.getBitmap(imageWidth, imageHeight);
+			startMs = System.currentTimeMillis();
+		}
 	}
 	
-	public void setFullScreen() {
+	public void setCameraFullScreen() {
 		ViewGroup.LayoutParams params = camera_texture_view_wrappter.getLayoutParams();
-		params.width = 500;
-		params.height = 290;
-//		params.width = 660;
-//		params.height = 380;
+		params.width = 1040;
+		params.height = 500;
 		camera_texture_view_wrappter.requestLayout();
 	}
 	
-	public void setSmallScreen() {
+	public void setCameraMidScreen() {
+		ViewGroup.LayoutParams params = camera_texture_view_wrappter.getLayoutParams();
+		params.width = 500;
+		params.height = 290;
+		camera_texture_view_wrappter.requestLayout();
+	}
+	
+	public void setCameraSmallScreen() {
 		ViewGroup.LayoutParams params = camera_texture_view_wrappter.getLayoutParams();
 		params.width = 340;
 		params.height = 200;
@@ -231,6 +232,8 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 		@Override
 		public void onSurfaceTextureAvailable(SurfaceTexture surface,
 				int width, int height) {
+			imageWidth = width;
+			imageHeight = height;
 			Log.d(TAG, "onSurfaceTextureAvailable");
 			mThread = new RenderThread();
 			mThread.start();
@@ -248,6 +251,8 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 		@Override
 		public void onSurfaceTextureSizeChanged(SurfaceTexture surface,
 				int width, int height) {
+			imageWidth = width;
+			imageHeight = height;
 			Log.d(TAG, "onSurfaceTextureSizeChanged");
 		}
 
@@ -265,43 +270,54 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 
 		@Override
 		public void run() {
-			Paint paint = new Paint();
-			paint.setAntiAlias(true);
-			paint.setFilterBitmap(true);
-			paint.setDither(true);
+//			Paint paint = new Paint();
+//			paint.setAntiAlias(true);
+//			paint.setFilterBitmap(true);
+//			paint.setDither(true);
 			
-			tmp = new Mat(width, height, CvType.CV_8UC1);
-			mIntermediateMat = new Mat(width, height, CvType.CV_8UC4);
-			mIntermediateMat2 = new Mat(width, height, CvType.CV_8UC1);
-			thresholdImage = new Mat(width, height, CvType.CV_8UC1);
+			
+//			mIntermediateMat = new Mat(width, height, CvType.CV_8UC4);
+//			mIntermediateMat2 = new Mat(width, height, CvType.CV_8UC1);
+//			thresholdImage = new Mat(width, height, CvType.CV_8UC1);
 
 			while (mRunning && !Thread.interrupted()) {
-				final Canvas canvas = mImageView.lockCanvas(null);
-				try {
-					if (videoSource != null) {
-						Bitmap video = Bitmap.createScaledBitmap(videoSource, 320, 180, true);
+				if (video != null && !video.isRecycled()) {
+					final Canvas canvas = mImageView.lockCanvas(null);
+					try {
 						if (mode.equals(IMAGEMODE.CANNY)) {
-							Utils.bitmapToMat(video, tmp);
+							// initailize matrix
+							Mat sourceMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
+							Mat cannyMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC4);
 							
-							Imgproc.cvtColor(tmp, tmp, Imgproc.COLOR_RGB2GRAY);
-						    Imgproc.Canny(tmp, mIntermediateMat, 80, 100);
-						    Imgproc.cvtColor(mIntermediateMat, tmp, Imgproc.COLOR_GRAY2RGBA, 4);
-						    Utils.matToBitmap(tmp, video);
+							Utils.bitmapToMat(video, sourceMat);
+							
+							Imgproc.cvtColor(sourceMat, sourceMat, Imgproc.COLOR_RGB2GRAY);
+						    Imgproc.Canny(sourceMat, cannyMat, 80, 100);
+						    Imgproc.cvtColor(cannyMat, sourceMat, Imgproc.COLOR_GRAY2RGBA, 4);
+						    Utils.matToBitmap(sourceMat, video);
+						    
+						    sourceMat.release();
+						    cannyMat.release();
+						    
 						} else if (mode.equals(IMAGEMODE.HOUGHCIRCLES)) {
-							Utils.bitmapToMat(video, tmp);
-							Imgproc.cvtColor(tmp, thresholdImage, Imgproc.COLOR_RGB2GRAY, 2);
-				            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
+							Mat sourceMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
+							Mat thresholdMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
+							
+							
+							Utils.bitmapToMat(video, sourceMat);
+							Imgproc.cvtColor(sourceMat, thresholdMat, Imgproc.COLOR_RGB2GRAY, 2);
+				            Imgproc.GaussianBlur(thresholdMat, thresholdMat, new Size(9, 9), 2, 2);
 				            
 				            Mat circles = new Mat();
 							
 				            int iCannyUpperThreshold = 65;
 				            int iMinRadius = 5;
 				            int iMaxRadius = 400;
-				            int iAccumulator = 200;
+				            int iAccumulator = 100;
 				            int iLineThickness = 3;
 				            
-				            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
-				            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
+				            Imgproc.HoughCircles(thresholdMat, circles, Imgproc.CV_HOUGH_GRADIENT, 
+				            		2.0, thresholdMat.rows() / 4, iCannyUpperThreshold, iAccumulator, 
 				            		iMinRadius, iMaxRadius);
 				            
 				            if (circles.cols() > 0){
@@ -313,29 +329,35 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 									int radius = (int)Math.round(vCircle[2]);
 									
 									// draw the found circle
-									Core.circle(thresholdImage, pt, radius, new Scalar(255,0,0), iLineThickness);
-									Core.circle(thresholdImage, pt, 3, new Scalar(255,0,0), iLineThickness);
+									Core.circle(thresholdMat, pt, radius, new Scalar(255,0,0), iLineThickness);
+									Core.circle(thresholdMat, pt, 3, new Scalar(255,0,0), iLineThickness);
 				            	}
 				            }
-				            Utils.matToBitmap(thresholdImage, video);
+				            Utils.matToBitmap(thresholdMat, video);
+				            sourceMat.release();
+				            thresholdMat.release();
+				            circles.release();
 							
 						} else if (mode.equals(IMAGEMODE.REDHOUGHCIRCLES)) {
-							Utils.bitmapToMat(video, tmp);
-							Imgproc.cvtColor(tmp, mIntermediateMat2, Imgproc.COLOR_RGB2HSV, 4);
+							Mat sourceMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
+							Mat thresholdMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
+							Mat hsvMat = new Mat(width, height, CvType.CV_8UC1);
+							Utils.bitmapToMat(video, sourceMat);
+							Imgproc.cvtColor(sourceMat, hsvMat, Imgproc.COLOR_RGB2HSV, 4);
 							
-							Core.inRange(mIntermediateMat2, new Scalar(-2, 80, 80), new Scalar(3, 255, 255), thresholdImage); // for blue color
-				            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
+							Core.inRange(hsvMat, new Scalar(-2, 80, 80), new Scalar(3, 255, 255), thresholdMat); // for blue color
+				            Imgproc.GaussianBlur(thresholdMat, thresholdMat, new Size(9, 9), 2, 2);
 				            
 				            Mat circles = new Mat();
 							
 				            int iCannyUpperThreshold = 55;
 				            int iMinRadius = 3;
 				            int iMaxRadius = 400;
-				            int iAccumulator = 68;
+				            int iAccumulator = 50;
 				            int iLineThickness = 3;
 				            
-				            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
-				            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
+				            Imgproc.HoughCircles(thresholdMat, circles, Imgproc.CV_HOUGH_GRADIENT, 
+				            		2.0, thresholdMat.rows() / 4, iCannyUpperThreshold, iAccumulator, 
 				            		iMinRadius, iMaxRadius);
 				            
 				            
@@ -349,29 +371,39 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 									int radius = (int)Math.round(vCircle[2]);
 									
 									// draw the found circle
-									Core.circle(mIntermediateMat2, pt, radius, new Scalar(255,255,255), iLineThickness);
-									Core.circle(mIntermediateMat2, pt, 3, new Scalar(255,255,255), iLineThickness);
+									Core.circle(hsvMat, pt, radius, new Scalar(255,255,255), iLineThickness);
+									Core.circle(hsvMat, pt, 3, new Scalar(255,255,255), iLineThickness);
 				            	}
 				            }
-				            Imgproc.cvtColor(mIntermediateMat2, tmp, Imgproc.COLOR_HSV2RGB, 0);
-							Utils.matToBitmap(tmp, video);
+				            Imgproc.cvtColor(hsvMat, sourceMat, Imgproc.COLOR_HSV2RGB, 0);
+							Utils.matToBitmap(sourceMat, video);
+							
+							sourceMat.release();
+							thresholdMat.release();
+							hsvMat.release();
+							circles.release();
+							
 						} else if (mode.equals(IMAGEMODE.REDTHRESHOLD)) {
-							Utils.bitmapToMat(video, tmp);
-							Imgproc.cvtColor(tmp, mIntermediateMat2, Imgproc.COLOR_RGB2HSV, 4);
+							Mat sourceMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
+							Mat thresholdMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
+							Mat hsvMat = new Mat(width, height, CvType.CV_8UC1);
 							
-							Core.inRange(mIntermediateMat2, new Scalar(-2, 80, 80), new Scalar(3, 255, 255), thresholdImage); // for blue color
-				            Imgproc.GaussianBlur(thresholdImage, thresholdImage, new Size(9, 9), 2, 2);
+							Utils.bitmapToMat(video, sourceMat);
+							Imgproc.cvtColor(sourceMat, hsvMat, Imgproc.COLOR_RGB2HSV, 4);
+							
+							Core.inRange(hsvMat, new Scalar(-2, 80, 80), new Scalar(3, 255, 255), thresholdMat); // for blue color
+				            Imgproc.GaussianBlur(thresholdMat, thresholdMat, new Size(9, 9), 2, 2);
 				            
 				            Mat circles = new Mat();
 							
 				            int iCannyUpperThreshold = 55;
 				            int iMinRadius = 3;
 				            int iMaxRadius = 400;
-				            int iAccumulator = 68;
+				            int iAccumulator = 50;
 				            int iLineThickness = 3;
 				            
-				            Imgproc.HoughCircles(thresholdImage, circles, Imgproc.CV_HOUGH_GRADIENT, 
-				            		2.0, thresholdImage.rows() / 4, iCannyUpperThreshold, iAccumulator, 
+				            Imgproc.HoughCircles(thresholdMat, circles, Imgproc.CV_HOUGH_GRADIENT, 
+				            		2.0, thresholdMat.rows() / 4, iCannyUpperThreshold, iAccumulator, 
 				            		iMinRadius, iMaxRadius);
 				            
 				            
@@ -385,27 +417,32 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 									int radius = (int)Math.round(vCircle[2]);
 									
 									// draw the found circle
-									Core.circle(thresholdImage, pt, radius, new Scalar(255,0,0), iLineThickness);
-									Core.circle(thresholdImage, pt, 3, new Scalar(255,0,0), iLineThickness);
+									Core.circle(thresholdMat, pt, radius, new Scalar(255,0,0), iLineThickness);
+									Core.circle(thresholdMat, pt, 3, new Scalar(255,0,0), iLineThickness);
 				            	}
 				            }
-				            Imgproc.cvtColor(thresholdImage, tmp, Imgproc.COLOR_GRAY2BGR, 0);
-							Utils.matToBitmap(tmp, video);
+				            Imgproc.cvtColor(thresholdMat, sourceMat, Imgproc.COLOR_GRAY2BGR, 0);
+							Utils.matToBitmap(sourceMat, video);
+							
+							sourceMat.release();
+							thresholdMat.release();
+							hsvMat.release();
+							circles.release();
 						}
-						canvas.drawBitmap(video, 0, 0, paint);
-						
+						canvas.drawBitmap(video, 0, 0, null);
+					} finally {
+						if (video != null)	video.recycle();
+						mImageView.unlockCanvasAndPost(canvas);
 					}
 					
 					//canvas.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
 					//canvas.drawRect(x, y, x + 20.0f, y + 20.0f, paint);
-				} finally {
-					mImageView.unlockCanvasAndPost(canvas);
-				}
-
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					// Interrupted
+				} else {
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						// Interrupted
+					}
 				}
 			}
 		}

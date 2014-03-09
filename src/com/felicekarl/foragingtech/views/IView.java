@@ -13,6 +13,7 @@ public interface IView extends UpdateFlipForwardButtonListener, UpdateController
 	public Bitmap getImageBitmap();
 	public Surface getCameraSurface();
 	public void setIsFlying(boolean isFlying);
+	public void setIsEmergency(boolean isEmergency);
 	
 	public enum TypeView {
 		SPLASH, MENU, FLYINGMODE, NAVIGATINGMODE

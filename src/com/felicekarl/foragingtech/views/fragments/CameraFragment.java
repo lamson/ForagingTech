@@ -43,11 +43,13 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	private Surface mSurface;
 	private RelativeLayout camera_texture_view_wrappter;
 	private RelativeLayout camera_image_view_wrappter;
+	private RelativeLayout camera_photo_view_wrappter;
 	private Button btn_image_mode1;
 	private Button btn_image_mode2;
 	private Button btn_image_mode3;
 	private Button btn_image_mode4;
 	private Button btn_image_save;
+	private Button btn_photo_save;
 	
 	private CameraFragmentButtonListener mCameraFragmentButtonListener;
 	
@@ -99,6 +101,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
     	mImageView.setSurfaceTextureListener(new CanvasListener());
     	camera_texture_view_wrappter = (RelativeLayout) view.findViewById(R.id.camera_texture_view_wrappter);
     	camera_image_view_wrappter = (RelativeLayout) view.findViewById(R.id.camera_image_view_wrappter);
+    	camera_photo_view_wrappter = (RelativeLayout) view.findViewById(R.id.camera_photo_view_wrappter);
     	btn_image_mode1 = (Button) view.findViewById(R.id.btn_image_mode1);
     	btn_image_mode1.setOnClickListener(this);
     	btn_image_mode2 = (Button) view.findViewById(R.id.btn_image_mode2);
@@ -109,6 +112,8 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
     	btn_image_mode4.setOnClickListener(this);
     	btn_image_save = (Button) view.findViewById(R.id.btn_image_save);
     	btn_image_save.setOnClickListener(this);
+    	btn_photo_save = (Button) view.findViewById(R.id.btn_photo_save);
+    	btn_photo_save.setOnClickListener(this);
     	slideUpFragment();
     	
     	return view;
@@ -193,6 +198,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 		//ViewGroup.LayoutParams params = camera_texture_view_wrappter.getLayoutParams();
 		camera_texture_view_wrappter.setBackgroundColor(Color.parseColor(color));
 		camera_image_view_wrappter.setBackgroundColor(Color.parseColor(color));
+		camera_photo_view_wrappter.setBackgroundColor(Color.parseColor(color));
 	}
 
 	@Override
@@ -234,6 +240,10 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 			if (mCameraFragmentButtonListener != null)
 				mCameraFragmentButtonListener.saveProcessedImage();
 			break;
+		case R.id.btn_photo_save:
+			if (mCameraFragmentButtonListener != null)
+				mCameraFragmentButtonListener.saveOriginalImage();
+				
 		}
 	}
 	

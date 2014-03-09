@@ -3,6 +3,8 @@ package com.felicekarl.foragingtech.views.fragments;
 import com.felicekarl.foragingtech.R;
 import com.felicekarl.foragingtech.listeners.*;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,7 +87,8 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 			
 			break;
 		case R.id.btn_emergency:
-			//mDroneResetListener.resetDrone();
+			if (mContentActionBarFragmentButtonListener != null)
+				mContentActionBarFragmentButtonListener.emergency();
 			break;
 		case R.id.btn_takephoto:
 			if (mContentActionBarFragmentButtonListener != null)
@@ -96,6 +99,32 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 	
 	public boolean isFlying() {
 		return isFlying;
+	}
+	
+	public void setIsEmergency(boolean isEmergency) {
+		Log.d(TAG, "change text");
+		if(isEmergency) {
+			getActivity().runOnUiThread(new Runnable(){
+    			@Override
+    			public void run() {
+    				Log.d(TAG, "change text1");
+    				btn_emergency.setText("Calibrating");
+    				btn_emergency.setTextColor(Color.parseColor("#008a00"));
+    				btn_emergency.setBackgroundResource(R.drawable.btn_calibration_unpressed);
+    			}
+        	});
+			
+		} else {
+			getActivity().runOnUiThread(new Runnable(){
+    			@Override
+    			public void run() {
+    				Log.d(TAG, "change text2");
+    				btn_emergency.setText("Emergency");
+    				btn_emergency.setTextColor(Color.parseColor("#e51400"));
+    				btn_emergency.setBackgroundResource(R.drawable.btn_emergency_unpressed);
+    			}
+        	});
+		}
 	}
 
 	@Override

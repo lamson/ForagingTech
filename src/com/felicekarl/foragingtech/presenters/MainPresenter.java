@@ -86,9 +86,8 @@ public class MainPresenter implements Runnable {
 			}
 		});
 		
-		/* add back button listener to flip page from content to menu */
+		/* add flying mode actionbar framgment button listener */
 		view.updateContentActionBarFragmentButtonListener(new ContentActionBarFragmentButtonListener() {
-			
 			@Override
 			public void takePhoto() {
 				Log.d(TAG, "takePhoto()");
@@ -121,8 +120,25 @@ public class MainPresenter implements Runnable {
 			
 			@Override
 			public void backToMenu() {
-				if(mARDrone.isConnected())	mARDrone.disconnect();
+				if(mARDrone.isConnected())
+					mARDrone.disconnect();
 				view.setView(TypeView.MENU);
+			}
+
+			@Override
+			public void emergency() {
+				if(mARDrone.isConnected() && !mARDrone.isEmergency()) {
+					Log.d(TAG, "mode 1");
+					mARDrone.reset();
+					mARDrone.setIsEmergency(true);
+					view.setIsEmergency(true);
+				} else if(mARDrone.isConnected() && mARDrone.isEmergency()) {
+					Log.d(TAG, "mode 2");
+					mARDrone.reset();
+					mARDrone.setIsEmergency(false);
+					view.setIsEmergency(false);
+				} 
+					
 			}
 		});
 		
@@ -166,8 +182,10 @@ public class MainPresenter implements Runnable {
 
 			@Override
 			public void takeOff() {
-				if (mARDrone.isConnected()) {
+				if (mARDrone.isConnected() && !mARDrone.isEmergency()) {
 					mARDrone.takeOff();
+				} else {
+					Toast.makeText(context, "Calibration is needed.", Toast.LENGTH_SHORT).show();
 				}
 			}
 
@@ -207,6 +225,36 @@ public class MainPresenter implements Runnable {
 		        	Toast.makeText(context, filename + ".jpg" + " is successfully saved.", Toast.LENGTH_SHORT).show();
 				} catch (IOException e) {
 					Toast.makeText(context, "Error occurs while saving Image.", Toast.LENGTH_SHORT).show();
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void saveOriginalImage() {
+				Log.d(TAG, "takePhoto()");
+				BufferedOutputStream bos = null;
+				FileOutputStream fos = null;
+				try {
+					File dir = new File(ForagingTechConstraint.defaultPath);
+					if(!dir.isDirectory()){
+						dir.mkdirs();
+					}
+					String filename = ForagingTechConstraint.PT + "_" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+					fos = new FileOutputStream(ForagingTechConstraint.defaultPath + filename + ".jpg");
+		        	bos = new BufferedOutputStream(fos);	
+					Bitmap bmp = view.getCameraBitmap();
+					bmp.compress(Bitmap.CompressFormat.JPEG, 90, bos);
+		            bmp.recycle();
+		            if (bos != null) {
+		        		bos.close();
+		        	}
+		        	if (fos != null) {
+		        		fos.flush();
+						fos.close();
+		        	}
+		        	Toast.makeText(context, filename + ".jpg" + " is successfully saved.", Toast.LENGTH_SHORT).show();
+				} catch (IOException e) {
+					Toast.makeText(context, "Error occurs while saving Photo.", Toast.LENGTH_SHORT).show();
 					e.printStackTrace();
 				}
 			}

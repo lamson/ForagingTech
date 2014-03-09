@@ -70,7 +70,6 @@ public class MainView implements IView {
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		} else if(curTypeView.equals(TypeView.MENU) && type.equals(TypeView.FLYINGMODE)) {
 			curTypeView = TypeView.FLYINGMODE;
-			mCameraFragment.setCameraFullScreen();
 			mCameraFragment.setFrameColor("#f0a30a");
 			mCameraFragment.resetFragment();
 			
@@ -84,8 +83,8 @@ public class MainView implements IView {
 			
 		} else if(curTypeView.equals(TypeView.MENU) && type.equals(TypeView.NAVIGATINGMODE)) {
 			curTypeView = TypeView.NAVIGATINGMODE;
-			mCameraFragment.setCameraSmallScreen();
-			mCameraFragment.setFrameColor("#6a00ff");
+			//mCameraFragment.setCameraSmallScreen();
+			//mCameraFragment.setFrameColor("#6a00ff");
 			
 			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
@@ -155,5 +154,12 @@ public class MainView implements IView {
 	public void updateContentActionBarFragmentButtonListener(
 			ContentActionBarFragmentButtonListener mContentActionBarFragmentButtonListener) {
 		mContentFlyingFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
+	}
+
+	@Override
+	public void setIsEmergency(boolean isEmergency) {
+		if (curTypeView.equals(TypeView.FLYINGMODE)) {
+			mContentFlyingFragment.setIsEmergency(isEmergency);
+		}
 	}
 }

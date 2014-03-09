@@ -318,7 +318,7 @@ public abstract class CommandManager extends AbstractManager {
 				+ ",290718208";
 		continuance = true;
 	}
-	
+	// TODO: Mag mode doesn't work
 	public void move3D_Mag(int speedX, int speedY, int speedZ, int speedSpin, double psi, double psiAccuracy) {
 		if (speedX > 100)
 			speedX = 100;

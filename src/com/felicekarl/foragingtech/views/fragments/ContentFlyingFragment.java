@@ -83,4 +83,8 @@ public class ContentFlyingFragment extends BaseFragment implements OnClickListen
 		if (mContentActionBarFragment != null)
 			mContentActionBarFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
 	}
+	
+	public void setIsEmergency(boolean isEmergency) {
+		mContentActionBarFragment.setIsEmergency(isEmergency);
+	}
 }

@@ -55,6 +55,7 @@ public class ARDrone implements ARDroneInterface {
 	private boolean isConnected = false;
 	private boolean isFlying = false;
 	private boolean isEmergency = false;
+	private ARDroneCameraMode cameraMode = ARDroneCameraMode.FRONT_CAMERA;
 
 	public ARDrone() {
 		this(ARDroneConstants.IP_ADDRESS, null);
@@ -91,6 +92,14 @@ public class ARDrone implements ARDroneInterface {
 	
 	public void setIsEmergency(boolean isEmergency) {
 		this.isEmergency = isEmergency;
+	}
+	
+	public void setCameraMode(ARDroneCameraMode cameraMode) {
+		this.cameraMode = cameraMode;
+	}
+	
+	public ARDroneCameraMode getCameraMode() {
+		return cameraMode;
 	}
 	
 	public static void error(String message, Object obj) {

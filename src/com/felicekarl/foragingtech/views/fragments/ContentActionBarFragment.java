@@ -78,7 +78,8 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 			//mDebugSlideButtonListener.slide();
 			break;
 		case R.id.btn_toggle_video:
-			//mCameraOnButtonListener.toggle();
+			if (mContentActionBarFragmentButtonListener != null)
+				mContentActionBarFragmentButtonListener.toggleCameraMode();
 			break;
 		case R.id.btn_takeoff:
 			//mDroneTakeOffButtonListener.toggle();
@@ -102,12 +103,10 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 	}
 	
 	public void setIsEmergency(boolean isEmergency) {
-		Log.d(TAG, "change text");
 		if(isEmergency) {
 			getActivity().runOnUiThread(new Runnable(){
     			@Override
     			public void run() {
-    				Log.d(TAG, "change text1");
     				btn_emergency.setText("Calibrating");
     				btn_emergency.setTextColor(Color.parseColor("#008a00"));
     				btn_emergency.setBackgroundResource(R.drawable.btn_calibration_unpressed);
@@ -118,7 +117,6 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 			getActivity().runOnUiThread(new Runnable(){
     			@Override
     			public void run() {
-    				Log.d(TAG, "change text2");
     				btn_emergency.setText("Emergency");
     				btn_emergency.setTextColor(Color.parseColor("#e51400"));
     				btn_emergency.setBackgroundResource(R.drawable.btn_emergency_unpressed);

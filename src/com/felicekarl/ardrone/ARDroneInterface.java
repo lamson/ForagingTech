@@ -26,4 +26,8 @@ UpdateBatteryListener, UpdateGpsListener, UpdateMagnetoListener, UpdateStateList
 	public enum ARDroneVersion {
 		ARDRONE1, ARDRONE2
 	}
+	
+	public enum ARDroneCameraMode {
+		FRONT_CAMERA, BOTTOM_CAMERA
+	}
 }

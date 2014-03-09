@@ -90,7 +90,6 @@ public abstract class CommandManager extends AbstractManager {
 	}
 
 	public void takeOff() {
-		sendCommand("AT*FTRIM=" + SEQ);
 		command = "AT*REF=" + SEQ + ",290718208";
 		continuance = false;
 		landing = false;
@@ -408,6 +407,7 @@ public abstract class CommandManager extends AbstractManager {
 	 * Thank you Dirk !! 
 	 */
 	protected synchronized void sendCommand(String command) {
+		//Log.d("CMD", command);
 		int seqIndex = -1;
 		while ((seqIndex = command.indexOf(SEQ)) != -1)
 			command = command.substring(0, seqIndex) + (seq++)

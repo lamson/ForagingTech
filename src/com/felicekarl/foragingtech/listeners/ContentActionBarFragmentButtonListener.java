@@ -4,5 +4,5 @@ public interface ContentActionBarFragmentButtonListener {
 	public void backToMenu();
 	public void takePhoto();
 	public void emergency();
-	
+	public void toggleCameraMode();
 }

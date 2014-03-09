@@ -9,6 +9,7 @@ import java.util.Date;
 
 import com.felicekarl.ardrone.ARDrone;
 import com.felicekarl.ardrone.ARDroneConstants;
+import com.felicekarl.ardrone.ARDroneInterface.ARDroneCameraMode;
 import com.felicekarl.ardrone.managers.navdata.DroneState;
 import com.felicekarl.ardrone.managers.navdata.listeners.AttitudeListener;
 import com.felicekarl.ardrone.managers.navdata.listeners.StateListener;
@@ -139,6 +140,20 @@ public class MainPresenter implements Runnable {
 					view.setIsEmergency(false);
 				} 
 					
+			}
+
+			@Override
+			public void toggleCameraMode() {
+				Log.d(TAG, "toggleCameraMode()");
+				if (mARDrone.getCameraMode().equals(ARDroneCameraMode.FRONT_CAMERA)) {
+					Log.d(TAG, "toggleCameraMode1()");
+					mARDrone.setCameraMode(ARDroneCameraMode.BOTTOM_CAMERA);
+					mARDrone.toggleCamera();
+				} else if (mARDrone.getCameraMode().equals(ARDroneCameraMode.BOTTOM_CAMERA)) {
+					Log.d(TAG, "toggleCameraMode2()");
+					mARDrone.setCameraMode(ARDroneCameraMode.FRONT_CAMERA);
+					mARDrone.setHorizontalCamera();
+				}
 			}
 		});
 		

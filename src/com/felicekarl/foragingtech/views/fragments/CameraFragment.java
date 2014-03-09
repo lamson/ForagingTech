@@ -320,7 +320,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 				            
 				            Mat circles = new Mat();
 							
-				            int iCannyUpperThreshold = 65;
+				            int iCannyUpperThreshold = 30;
 				            int iMinRadius = 5;
 				            int iMaxRadius = 400;
 				            int iAccumulator = 100;
@@ -360,14 +360,14 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 				            
 				            Mat circles = new Mat();
 							
-				            int iCannyUpperThreshold = 30;
+				            int iCannyUpperThreshold = 20;
 				            int iMinRadius = 3;
 				            int iMaxRadius = 400;
 				            int iAccumulator = 50;
 				            int iLineThickness = 3;
 				            
 				            Imgproc.HoughCircles(thresholdMat, circles, Imgproc.CV_HOUGH_GRADIENT, 
-				            		2.0, thresholdMat.rows() / 4, iCannyUpperThreshold, iAccumulator, 
+				            		2.0, thresholdMat.rows() / 8, iCannyUpperThreshold, iAccumulator, 
 				            		iMinRadius, iMaxRadius);
 				            
 				            
@@ -406,14 +406,14 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 				            
 				            Mat circles = new Mat();
 							
-				            int iCannyUpperThreshold = 30;
+				            int iCannyUpperThreshold = 20;
 				            int iMinRadius = 3;
 				            int iMaxRadius = 400;
 				            int iAccumulator = 50;
 				            int iLineThickness = 3;
 				            
 				            Imgproc.HoughCircles(thresholdMat, circles, Imgproc.CV_HOUGH_GRADIENT, 
-				            		2.0, thresholdMat.rows() / 4, iCannyUpperThreshold, iAccumulator, 
+				            		2.0, thresholdMat.rows() / 8, iCannyUpperThreshold, iAccumulator, 
 				            		iMinRadius, iMaxRadius);
 				            
 				            

@@ -84,21 +84,21 @@ public class PagerSlidePageFragment extends Fragment implements OnClickListener,
     		view = (ViewGroup) inflater
                     .inflate(R.layout.fragment_pager_slide_page1, container, false);
             // Set the title view to show the page number.
-            ((TextView) view.findViewById(R.id.pageNumber)).setText(String.valueOf(mPageNumber + 1));
+            //((TextView) view.findViewById(R.id.pageNumber)).setText(String.valueOf(mPageNumber + 1));
     		break;
     	case 1:
     		// Inflate the layout containing a title and body text.
     		view = (ViewGroup) inflater
                     .inflate(R.layout.fragment_pager_slide_page2, container, false);
             // Set the title view to show the page number.
-            ((TextView) view.findViewById(R.id.pageNumber)).setText(String.valueOf(mPageNumber + 1));
+            //((TextView) view.findViewById(R.id.pageNumber)).setText(String.valueOf(mPageNumber + 1));
     		break;
     	case 2:
     		// Inflate the layout containing a title and body text.
     		view = (ViewGroup) inflater
                     .inflate(R.layout.fragment_pager_slide_page3, container, false);
             // Set the title view to show the page number.
-            ((TextView) view.findViewById(R.id.pageNumber)).setText(String.valueOf(mPageNumber + 1));
+            //((TextView) view.findViewById(R.id.pageNumber)).setText(String.valueOf(mPageNumber + 1));
     		break;
         }
         

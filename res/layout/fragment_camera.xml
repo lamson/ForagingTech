@@ -24,7 +24,7 @@
             android:layout_alignParentTop="true" />
 
         <LinearLayout
-            android:id="@+id/linearLayout1"
+            android:id="@+id/ll_image_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -89,6 +89,7 @@
             android:layout_below="@+id/camera_image_view"
             android:layout_centerHorizontal="true"
             android:drawableLeft="@drawable/btn_image_save"
+            android:layout_marginTop="5dp"
             android:text="Save Processed Image"
             android:textSize="25sp" />
 
@@ -96,7 +97,7 @@
 
     <RelativeLayout
         android:id="@+id/camera_photo_view_wrappter"
-        android:layout_width="wrap_content"
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@+id/camera_texture_view_wrappter"
@@ -110,8 +111,8 @@
         <Button
             android:id="@+id/btn_photo_save"
             style="@style/FooterPagerButton"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:drawableLeft="@drawable/btn_image_save"
             android:text="Save Original Image"
             android:textSize="25sp" />

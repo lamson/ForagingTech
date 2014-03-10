@@ -29,8 +29,10 @@ import android.view.View;
 import android.view.TextureView.SurfaceTextureListener;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class CameraFragment extends BaseFragment implements TextureView.SurfaceTextureListener,
@@ -50,6 +52,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	private Button btn_image_mode4;
 	private Button btn_image_save;
 	private Button btn_photo_save;
+	private LinearLayout ll_image_mode;
 	
 	private CameraFragmentButtonListener mCameraFragmentButtonListener;
 	
@@ -73,14 +76,42 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 		CANNY, HOUGHCIRCLES, REDHOUGHCIRCLES, REDTHRESHOLD
 	}
 	
-	private IMAGEMODE mode;
+	public enum CAMERAMODE {
+		FLYING, NAVIGATING
+	}
 	
-	public void setImageMode(IMAGEMODE mode) {
-		this.mode = mode;
+	private IMAGEMODE imgMode;
+	private CAMERAMODE camMode;
+	
+	public void setImageMode(IMAGEMODE imgMode) {
+		this.imgMode = imgMode;
 	}
 	
 	public IMAGEMODE getImageMode() {
-		return mode;
+		return imgMode;
+	}
+	
+	public void setCameraMode(CAMERAMODE camMode) {
+		this.camMode = camMode;
+		if (camMode.equals(CAMERAMODE.FLYING)) {
+			setCameraFullScreen();
+			camera_image_view_wrappter.setVisibility(View.VISIBLE);
+			ll_image_mode.setVisibility(View.VISIBLE);
+			ViewGroup.MarginLayoutParams params = (MarginLayoutParams) camera_photo_view_wrappter.getLayoutParams();
+			params.setMargins(0, 0, 0, 0);
+			camera_photo_view_wrappter.requestLayout();
+		} else if (camMode.equals(CAMERAMODE.NAVIGATING)) {
+			setCameraSmallScreen();
+			camera_image_view_wrappter.setVisibility(View.INVISIBLE);
+			ll_image_mode.setVisibility(View.INVISIBLE);
+			ViewGroup.MarginLayoutParams params = (MarginLayoutParams) camera_photo_view_wrappter.getLayoutParams();
+			params.setMargins(0, 190, 0, 0);
+			camera_photo_view_wrappter.requestLayout();
+		}
+	}
+	
+	public CAMERAMODE getCameraMode() {
+		return camMode;
 	}
 	
 	public CameraFragment() {
@@ -114,6 +145,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
     	btn_image_save.setOnClickListener(this);
     	btn_photo_save = (Button) view.findViewById(R.id.btn_photo_save);
     	btn_photo_save.setOnClickListener(this);
+    	ll_image_mode = (LinearLayout) view.findViewById(R.id.ll_image_mode);
     	slideUpFragment();
     	
     	return view;
@@ -167,9 +199,11 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 
 	@Override
 	public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-		if ( (System.currentTimeMillis() - startMs) > 50 ) {
-			video = mTextureView.getBitmap(imageWidth, imageHeight);
-			startMs = System.currentTimeMillis();
+		if (camMode.equals(CAMERAMODE.FLYING)) {
+			if ( (System.currentTimeMillis() - startMs) > 50 ) {
+				video = mTextureView.getBitmap(imageWidth, imageHeight);
+				startMs = System.currentTimeMillis();
+			}
 		}
 	}
 	
@@ -209,28 +243,28 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 		mode_off.setBounds(0, 0, 40, 40);
 		switch (v.getId()) {
 		case R.id.btn_image_mode1:
-			mode = IMAGEMODE.CANNY;
+			imgMode = IMAGEMODE.CANNY;
 			btn_image_mode1.setCompoundDrawables(mode_on, null, null, null);
 			btn_image_mode2.setCompoundDrawables(mode_off, null, null, null);
 			btn_image_mode3.setCompoundDrawables(mode_off, null, null, null);
 			btn_image_mode4.setCompoundDrawables(mode_off, null, null, null);
 			break;
 		case R.id.btn_image_mode2:
-			mode = IMAGEMODE.HOUGHCIRCLES;
+			imgMode = IMAGEMODE.HOUGHCIRCLES;
 			btn_image_mode1.setCompoundDrawables(mode_off, null, null, null);
 			btn_image_mode2.setCompoundDrawables(mode_on, null, null, null);
 			btn_image_mode3.setCompoundDrawables(mode_off, null, null, null);
 			btn_image_mode4.setCompoundDrawables(mode_off, null, null, null);
 			break;
 		case R.id.btn_image_mode3:
-			mode = IMAGEMODE.REDHOUGHCIRCLES;
+			imgMode = IMAGEMODE.REDHOUGHCIRCLES;
 			btn_image_mode1.setCompoundDrawables(mode_off, null, null, null);
 			btn_image_mode2.setCompoundDrawables(mode_off, null, null, null);
 			btn_image_mode3.setCompoundDrawables(mode_on, null, null, null);
 			btn_image_mode4.setCompoundDrawables(mode_off, null, null, null);
 			break;
 		case R.id.btn_image_mode4:
-			mode = IMAGEMODE.REDTHRESHOLD;
+			imgMode = IMAGEMODE.REDTHRESHOLD;
 			btn_image_mode1.setCompoundDrawables(mode_off, null, null, null);
 			btn_image_mode2.setCompoundDrawables(mode_off, null, null, null);
 			btn_image_mode3.setCompoundDrawables(mode_off, null, null, null);
@@ -296,7 +330,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 					if (video != null && !video.isRecycled()) {
 						final Canvas canvas = mImageView.lockCanvas(null);
 						try {
-							if (mode.equals(IMAGEMODE.CANNY)) {
+							if (imgMode.equals(IMAGEMODE.CANNY)) {
 								// initailize matrix
 								Mat sourceMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
 								Mat cannyMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC4);
@@ -311,7 +345,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 							    sourceMat.release();
 							    cannyMat.release();
 							    
-							} else if (mode.equals(IMAGEMODE.HOUGHCIRCLES)) {
+							} else if (imgMode.equals(IMAGEMODE.HOUGHCIRCLES)) {
 								Mat sourceMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
 								Mat thresholdMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
 								
@@ -350,7 +384,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 					            thresholdMat.release();
 					            circles.release();
 								
-							} else if (mode.equals(IMAGEMODE.REDHOUGHCIRCLES)) {
+							} else if (imgMode.equals(IMAGEMODE.REDHOUGHCIRCLES)) {
 								Mat sourceMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
 								Mat thresholdMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
 								Mat hsvMat = new Mat(width, height, CvType.CV_8UC1);
@@ -395,7 +429,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 								hsvMat.release();
 								circles.release();
 								
-							} else if (mode.equals(IMAGEMODE.REDTHRESHOLD)) {
+							} else if (imgMode.equals(IMAGEMODE.REDTHRESHOLD)) {
 								Mat sourceMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
 								Mat thresholdMat = new Mat(imageWidth, imageHeight, CvType.CV_8UC1);
 								Mat hsvMat = new Mat(width, height, CvType.CV_8UC1);
@@ -472,7 +506,7 @@ public class CameraFragment extends BaseFragment implements TextureView.SurfaceT
 	@Override
 	public void resetFragment() {
 		// reset Image Processing Mode as Canny
-		mode = IMAGEMODE.CANNY;
+		imgMode = IMAGEMODE.CANNY;
 		Drawable mode_on= getActivity().getResources().getDrawable(R.drawable.btn_mode_on);
 		mode_on.setBounds(0, 0, 40, 40);
 		Drawable mode_off= getActivity().getResources().getDrawable(R.drawable.btn_mode_off);

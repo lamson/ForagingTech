@@ -112,7 +112,7 @@ public class CommandManager2 extends CommandManager {
 			sendCommand("AT*CONFIG_IDS=" + SEQ + ",\"" + SESSION_ID + "\",\""
 					+ PROFILE_ID + "\",\"" + APPLICATION_ID + "\"" + CR);
 			sendCommand("AT*CONFIG=" + SEQ
-					+ ",\"video:max_bitrate\",\"1000\"" + CR);
+					+ ",\"video:max_bitrate\",\"500\"" + CR);
 			
 			// video codec fps
 			sendCommand("AT*CONFIG_IDS=" + SEQ + ",\"" + SESSION_ID + "\",\""

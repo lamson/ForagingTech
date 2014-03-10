@@ -55,6 +55,7 @@ public class ARDrone implements ARDroneInterface {
 	private boolean isConnected = false;
 	private boolean isFlying = false;
 	private boolean isEmergency = false;
+	private boolean isNavigating = false;
 	private ARDroneCameraMode cameraMode = ARDroneCameraMode.FRONT_CAMERA;
 
 	public ARDrone() {
@@ -84,6 +85,14 @@ public class ARDrone implements ARDroneInterface {
 	
 	public void setIsFlying(boolean isFlying) {
 		this.isFlying =  isFlying;
+	}
+	
+	public boolean isNavigating() {
+		return isNavigating;
+	}
+	
+	public void setIsNavigating(boolean isNavigating) {
+		this.isNavigating =  isNavigating;
 	}
 	
 	public boolean isEmergency() {
@@ -263,6 +272,12 @@ public class ARDrone implements ARDroneInterface {
 	public void move3D(int speedX, int speedY, int speedZ, int speedSpin) {
 		if (commandManager != null)
 			commandManager.move3D(speedX, speedY, speedZ, speedSpin);
+	}
+	
+	@Override
+	public void move3DNav(int speedX, int speedY, int speedZ, int speedSpin) {
+		if (commandManager != null)
+			commandManager.move3DNav(speedX, speedY, speedZ, speedSpin);
 	}
 
 	@Override

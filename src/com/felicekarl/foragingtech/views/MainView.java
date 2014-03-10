@@ -1,10 +1,16 @@
 package com.felicekarl.foragingtech.views;
 
+import java.util.List;
+
 import com.felicekarl.foragingtech.R;
 import com.felicekarl.foragingtech.activities.MainActivity;
 import com.felicekarl.foragingtech.listeners.*;
 import com.felicekarl.foragingtech.views.fragments.*;
 import com.felicekarl.foragingtech.views.fragments.BaseFragment.DIRECTION;
+import com.felicekarl.foragingtech.views.fragments.CameraFragment.CAMERAMODE;
+import com.felicekarl.foragingtech.views.fragments.ControllerNavigatingFragment.NAVIGATINGMODE;
+import com.nutiteq.components.MapPos;
+
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -72,6 +78,7 @@ public class MainView implements IView {
 			curTypeView = TypeView.FLYINGMODE;
 			mCameraFragment.setFrameColor("#f0a30a");
 			mCameraFragment.resetFragment();
+			mCameraFragment.setCameraMode(CAMERAMODE.FLYING);
 			
 			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
@@ -84,7 +91,8 @@ public class MainView implements IView {
 		} else if(curTypeView.equals(TypeView.MENU) && type.equals(TypeView.NAVIGATINGMODE)) {
 			curTypeView = TypeView.NAVIGATINGMODE;
 			//mCameraFragment.setCameraSmallScreen();
-			//mCameraFragment.setFrameColor("#6a00ff");
+			mCameraFragment.setFrameColor("#6a00ff");
+			mCameraFragment.setCameraMode(CAMERAMODE.NAVIGATING);
 			
 			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
@@ -143,6 +151,7 @@ public class MainView implements IView {
 	@Override
 	public void setIsFlying(boolean isFlying) {
 		mControllerFragment.setIsFlying(isFlying);
+		mContentNavigatingFragment.setIsFlying(isFlying);
 	}
 
 	@Override
@@ -154,6 +163,7 @@ public class MainView implements IView {
 	public void updateContentActionBarFragmentButtonListener(
 			ContentActionBarFragmentButtonListener mContentActionBarFragmentButtonListener) {
 		mContentFlyingFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
+		mContentNavigatingFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
 	}
 
 	@Override
@@ -161,5 +171,41 @@ public class MainView implements IView {
 		if (curTypeView.equals(TypeView.FLYINGMODE)) {
 			mContentFlyingFragment.setIsEmergency(isEmergency);
 		}
+	}
+
+	@Override
+	public void updateControllerNavigatingFragmentButtonListener(
+			ControllerNavigatingFragmentButtonListener mControllerNavigatingFragmentButtonListener) {
+		mContentNavigatingFragment.updateControllerNavigatingFragmentButtonListener(mControllerNavigatingFragmentButtonListener);
+	}
+
+	@Override
+	public NAVIGATINGMODE getNavigatingMode() {
+		return mContentNavigatingFragment.getNavigatingMode();
+	}
+
+	@Override
+	public void setNavigatingMode(NAVIGATINGMODE mode) {
+		mContentNavigatingFragment.setNavigatingMode(mode);
+	}
+
+	@Override
+	public List<MapPos> getPath() {
+		return mContentNavigatingFragment.getPath();
+	}
+
+	@Override
+	public void setDroneCurPos(double lat, double lon) {
+		mContentNavigatingFragment.setDroneCurPos(lat, lon);
+	}
+
+	@Override
+	public void updateUserCurPos() {
+		mContentNavigatingFragment.updateUserCurPos();
+	}
+
+	@Override
+	public MapPos getDroneCurPos() {
+		return mContentNavigatingFragment.getDroneCurPos();
 	}
 }

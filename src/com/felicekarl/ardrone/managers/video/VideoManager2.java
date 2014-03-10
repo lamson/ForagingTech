@@ -99,7 +99,10 @@ public class VideoManager2 extends VideoManager {
     		while(mHeader.position() < 76) {
     			byte[] extra = new byte[mHeader.remaining()];
     			int extraSize = fin.read(extra);
-    			mHeader.put(extra, 0, extraSize);
+    			if (extraSize != -1) {
+    				mHeader.put(extra, 0, extraSize);
+    			}
+    			
     		}
     		
     		mHeader.rewind();

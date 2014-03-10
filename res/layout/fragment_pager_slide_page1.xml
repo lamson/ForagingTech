@@ -9,10 +9,12 @@
 		android:layout_height="match_parent" android:layout_gravity="center"
 		android:orientation="vertical" android:padding="16dp">
 
-		<TextView android:id="@+id/pageNumber" android:layout_width="match_parent"
-			android:layout_height="match_parent" android:gravity="center"
-			android:textColor="@android:color/black" android:textSize="50sp"
-			android:textStyle="bold" />
+		<ImageView
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_marginBottom="60dp"
+		    android:src="@drawable/instruction_flying_mode" />
+		
 	</LinearLayout>
 
 </LinearLayout>

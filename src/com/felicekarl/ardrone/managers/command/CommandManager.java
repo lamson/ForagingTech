@@ -317,6 +317,29 @@ public abstract class CommandManager extends AbstractManager {
 				+ ",290718208";
 		continuance = true;
 	}
+	
+	public void move3DNav(int speedX, int speedY, int speedZ, int speedSpin) {
+		int maxSpeed = 20;
+		if (speedX > maxSpeed)
+			speedX = maxSpeed;
+		else if (speedX < -maxSpeed)
+			speedX = -maxSpeed;
+		if (speedY > maxSpeed)
+			speedY = maxSpeed;
+		else if (speedY < -maxSpeed)
+			speedY = -maxSpeed;
+		if (speedZ > 100)
+			speedZ = 100;
+		else if (speedZ < -100)
+			speedZ = -100;
+
+		command = "AT*PCMD=" + SEQ + ",1," + intOfFloat(-speedY / 100.0f) + ","
+				+ intOfFloat(-speedX / 100.0f) + ","
+				+ intOfFloat(-speedZ / 100.0f) + ","
+				+ intOfFloat(-speedSpin / 100.0f) + "\r" + "AT*REF=" + SEQ
+				+ ",290718208";
+		continuance = true;
+	}
 	// TODO: Mag mode doesn't work
 	public void move3D_Mag(int speedX, int speedY, int speedZ, int speedSpin, double psi, double psiAccuracy) {
 		if (speedX > 100)

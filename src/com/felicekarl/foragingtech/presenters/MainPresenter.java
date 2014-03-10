@@ -6,18 +6,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import com.felicekarl.ardrone.ARDrone;
 import com.felicekarl.ardrone.ARDroneConstants;
 import com.felicekarl.ardrone.ARDroneInterface.ARDroneCameraMode;
 import com.felicekarl.ardrone.managers.navdata.DroneState;
 import com.felicekarl.ardrone.managers.navdata.listeners.AttitudeListener;
+import com.felicekarl.ardrone.managers.navdata.listeners.GpsListener;
 import com.felicekarl.ardrone.managers.navdata.listeners.StateListener;
 import com.felicekarl.foragingtech.ForagingTechConstraint;
 import com.felicekarl.foragingtech.listeners.*;
 import com.felicekarl.foragingtech.models.IModel;
 import com.felicekarl.foragingtech.views.IView;
 import com.felicekarl.foragingtech.views.IView.TypeView;
+import com.felicekarl.foragingtech.views.fragments.ControllerNavigatingFragment.NAVIGATINGMODE;
+import com.nutiteq.components.MapPos;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -35,12 +39,18 @@ public class MainPresenter implements Runnable {
 	private IView view;
 	private IModel model;
 	private Thread thread;
+	private Thread navThread;
 	
 	private ARDrone mARDrone;
 	private int droneSpeedX;
 	private int droneSpeedY;
 	private int droneSpeedZ;
 	private int droneSpeedSpin;
+	private double droneYaw;
+	private int droneAlt;
+	
+	private List<MapPos> path;
+	private int curPathIndex;
 	
 
 	public MainPresenter(Context context, IView view, IModel model){
@@ -274,6 +284,148 @@ public class MainPresenter implements Runnable {
 				}
 			}
 		});
+		
+		/* add controller navigating fragment */
+		view.updateControllerNavigatingFragmentButtonListener(new ControllerNavigatingFragmentButtonListener() {
+			@Override
+			public void toggleTakeOffLanding() {
+				if (mARDrone.isConnected() && !mARDrone.isFlying()) {
+					mARDrone.takeOff();
+					mARDrone.setIsFlying(true);
+					view.setIsFlying(true);
+				} else if (mARDrone.isConnected() && mARDrone.isFlying()) {
+					mARDrone.landing();
+					mARDrone.setIsFlying(false);
+					view.setIsFlying(false);
+					// stop navigating
+					view.setNavigatingMode(NAVIGATINGMODE.CONFIGURING);
+					mARDrone.setIsNavigating(false);
+					if (navThread != null) {
+						navThread.interrupt();
+					}
+				}
+			}
+
+			@Override
+			public void toggleStartStopNavigating() {
+				if (mARDrone.isConnected() && !mARDrone.isFlying()) {
+					Toast.makeText(context, "Take Off before start navigating", Toast.LENGTH_SHORT).show();
+				} else if (mARDrone.isConnected() && mARDrone.isFlying() && mARDrone.isNavigating()) {
+					view.setNavigatingMode(NAVIGATINGMODE.CONFIGURING);
+					mARDrone.setIsNavigating(false);
+					if (navThread != null) {
+						navThread.interrupt();
+					}
+					
+				} else if (mARDrone.isConnected() && mARDrone.isFlying() && !mARDrone.isNavigating()) {
+					if (view.getNavigatingMode().equals(NAVIGATINGMODE.CONFIGURED)) {
+						path = view.getPath();
+						if (path != null) {
+//							for(MapPos pos : path) {
+//								Log.d(TAG, pos.toString());
+//							}
+							view.setNavigatingMode(NAVIGATINGMODE.NAVIGATING);
+							mARDrone.setIsNavigating(true);
+							
+							// set first target as index 1
+							curPathIndex = 0;
+							Log.d("Karl", path.get(curPathIndex).toString());
+							
+							navThread = new Thread() {
+								@Override
+								public void run() {
+									while (!navThread.isInterrupted()) {
+										try {
+											if (mARDrone.isConnected() && mARDrone.isFlying() && mARDrone.isNavigating()) {
+												MapPos cur = view.getDroneCurPos();
+												MapPos target = path.get(curPathIndex);
+												double xDiff = target.x - cur.x;
+												double yDiff = target.y - cur.y;
+												double distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+												Log.d("Karl", "distance: " + distance + " | curPathIndex: " + curPathIndex);
+												if (distance < 10d) {
+													curPathIndex++;
+												}
+												if (curPathIndex > path.size() - 1) {
+													curPathIndex = path.size() - 1;
+													mARDrone.move3DNav(0, 0, 0, 0);
+													navThread.interrupt();
+												}
+												double theta = 0;
+												if (xDiff > 0 && yDiff > 0) {
+													theta = Math.atan2(xDiff, yDiff);
+												} else if (xDiff > 0 && yDiff <0) {
+													theta = Math.atan2(-yDiff, xDiff) + (Math.PI / 2);
+												} else if (xDiff < 0 && yDiff > 0) {
+													theta = -1 * Math.atan2(-xDiff, yDiff);
+												} else if (xDiff < 0 && yDiff < 0) {
+													theta = -1 * (Math.atan2(-yDiff, -xDiff) + (Math.PI / 2));
+												}
+												theta = Math.toDegrees(theta);
+												Log.d(TAG, String.format("xDiff: %3.5f, yDiff: %3.5f, theta: %3.5f", xDiff, yDiff, theta));
+												double vLength = Math.sqrt(xDiff*xDiff + yDiff * yDiff);
+												float speedXY = 1.5f;
+												int speedSpin = 0;
+												int MIN_HEIGHT = 2500;
+												int speedZ = 0;
+												
+												if (droneYaw > 0 && theta > 0) {
+													if (droneYaw < theta) {
+														speedSpin = (int) (-1 * speedXY * Math.abs(droneYaw - theta));
+														//mDebugFragment.setDebugMsg(14, String.format("turn right"));
+													} else if (droneYaw > theta) {
+														speedSpin = (int) (speedXY * Math.abs(droneYaw - theta));
+														//mDebugFragment.setDebugMsg(14, String.format("turn left"));
+													}
+												} else if (droneYaw < 0 && theta < 0) {
+													if (droneYaw < theta) {
+														speedSpin = (int) (-1 * speedXY * Math.abs(droneYaw - theta));
+														//mDebugFragment.setDebugMsg(14, String.format("turn right"));
+													} else if (droneYaw > theta) {
+														speedSpin = (int) (speedXY * Math.abs(droneYaw - theta));
+														//mDebugFragment.setDebugMsg(14, String.format("turn left"));
+													}
+												} else if (droneYaw < 0 && theta > 0) {
+													speedSpin = (int) (-1 * speedXY * Math.abs(droneYaw - theta));
+													//mDebugFragment.setDebugMsg(14, String.format("turn right"));
+												} else if (droneYaw > 0 && theta < 0) {
+													speedSpin = (int) (speedXY * Math.abs(droneYaw - theta));
+													//mDebugFragment.setDebugMsg(14, String.format("turn left"));
+												}
+												
+												if (droneAlt < MIN_HEIGHT) {
+													speedZ = (int) (-1 * (MIN_HEIGHT - droneAlt) * 0.8);
+												} else {
+													speedZ = (int) (-1 * (MIN_HEIGHT - droneAlt) * 0.8);
+												}
+												if (Math.abs(droneYaw - theta) > 15) {
+													mARDrone.move3DNav(0, 0, speedZ, (int) (speedSpin * 1) );
+												} else {
+													mARDrone.move3DNav((int) (speedXY * vLength * 0.7), 0, speedZ, (int) (speedSpin * 1));
+												}
+											}
+											sleep(100);
+										} catch (InterruptedException e) {
+											Thread.currentThread().interrupt();
+											e.printStackTrace();
+										}
+									}
+								}
+							};
+							
+							navThread.start();
+						}
+						
+					} else if (view.getNavigatingMode().equals(NAVIGATINGMODE.CONFIGURING)) {
+						Toast.makeText(context, "Press Configuring Button before start navigating", Toast.LENGTH_SHORT).show();
+					}
+				}
+				
+			}
+		});
+		
+		
+		
 	}
 	
 	
@@ -350,7 +502,22 @@ public class MainPresenter implements Runnable {
 		mARDrone.updateAttitudeListener(new AttitudeListener() {
 			@Override
 			public void attitudeUpdated(float pitch, float roll, float yaw, int altitude) {
-				
+				droneYaw = yaw;
+				droneAlt = altitude;
+			}
+		});
+		
+		/* add GPS Listener */
+		mARDrone.updateGpsListener(new GpsListener() {
+			@Override
+			public void gpsLocChanged(double lat, double lon, double elevation,
+					double hdop, int data_available, double lat0, double lon0,
+					double lat_fuse, double lon_fuse, long gps_state, double vdop,
+					double pdop, float speed, long last_frame_timestamp, float degree,
+					float degree_mag) {
+				//Log.d(TAG, "lat: " + lat + " | lon: " + lon);
+				view.setDroneCurPos(lat, lon);
+				view.updateUserCurPos();
 			}
 		});
 		

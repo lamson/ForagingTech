@@ -2,19 +2,27 @@ package com.felicekarl.foragingtech.views;
 
 import java.util.List;
 
-import com.felicekarl.foragingtech.R;
-import com.felicekarl.foragingtech.activities.MainActivity;
-import com.felicekarl.foragingtech.listeners.*;
-import com.felicekarl.foragingtech.views.fragments.*;
-import com.felicekarl.foragingtech.views.fragments.BaseFragment.DIRECTION;
-import com.felicekarl.foragingtech.views.fragments.CameraFragment.CAMERAMODE;
-import com.felicekarl.foragingtech.views.fragments.ControllerNavigatingFragment.NAVIGATINGMODE;
-import com.nutiteq.components.MapPos;
-
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.Surface;
+
+import com.felicekarl.foragingtech.R;
+import com.felicekarl.foragingtech.activities.MainActivity;
+import com.felicekarl.foragingtech.listeners.CameraFragmentButtonListener;
+import com.felicekarl.foragingtech.listeners.ContentActionBarFragmentButtonListener;
+import com.felicekarl.foragingtech.listeners.ControllerListener;
+import com.felicekarl.foragingtech.listeners.ControllerNavigatingFragmentButtonListener;
+import com.felicekarl.foragingtech.listeners.FlipForwardButtonListener;
+import com.felicekarl.foragingtech.views.fragments.BaseFragment.DIRECTION;
+import com.felicekarl.foragingtech.views.fragments.CameraFragment;
+import com.felicekarl.foragingtech.views.fragments.ContentFlyingFragment;
+import com.felicekarl.foragingtech.views.fragments.ControllerFragment;
+import com.felicekarl.foragingtech.views.fragments.ControllerNavigatingFragment.NAVIGATINGMODE;
+import com.felicekarl.foragingtech.views.fragments.MainFragment;
+import com.felicekarl.foragingtech.views.fragments.PagerFragment;
+import com.felicekarl.foragingtech.views.fragments.SplashFragment;
+import com.nutiteq.components.MapPos;
 
 public class MainView implements IView {
 	private static final String TAG = MainView.class.getSimpleName();
@@ -22,9 +30,10 @@ public class MainView implements IView {
 	private Context context;
 	private TypeView curTypeView;
 	
+	private MainFragment mMainFragment;
 	private FragmentManager mFragmentManager;
 	private SplashFragment mSplashFragment;
-	private PagerFragment mPagerFragment;
+	//private PagerFragment mPagerFragment;
 	private ContentFlyingFragment mContentFlyingFragment;
 	//private ContentNavigatingFragment mContentNavigatingFragment;
 	private CameraFragment mCameraFragment;
@@ -42,9 +51,11 @@ public class MainView implements IView {
 	 * initialize fragments and add on the fragment manager.
 	 */
 	private void initFragments() {
+	    mMainFragment = MainFragment.create();
+	    mFragmentManager.beginTransaction().add(R.id.main, mMainFragment).commit();
 		/* add pager screen fragment */
-		mPagerFragment = new PagerFragment();
-		mFragmentManager.beginTransaction().add(R.id.main, mPagerFragment).commit();
+		//mPagerFragment = new PagerFragment();
+		//mFragmentManager.beginTransaction().add(R.id.main, mPagerFragment).commit();
 		/* add splash screen fragment */
 		mSplashFragment = SplashFragment.create();
 		mFragmentManager.beginTransaction().add(R.id.main, mSplashFragment).commit();
@@ -66,8 +77,9 @@ public class MainView implements IView {
 	public void setView(TypeView type) {
 		if(curTypeView.equals(TypeView.SPLASH) && type.equals(TypeView.MENU)) {
 			curTypeView = TypeView.MENU;
+			mMainFragment.toggle(true, false, DIRECTION.TOP);
 			// pager (menu) fragment moves on the stage with slide up animation
-			mPagerFragment.toggle(true, true, DIRECTION.TOP);
+			//mPagerFragment.toggle(true, true, DIRECTION.TOP);
 			// splash fragment moves off the stage with slide up animation
 			mSplashFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mContentFlyingFragment.toggle(false, false, DIRECTION.TOP);
@@ -76,11 +88,10 @@ public class MainView implements IView {
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		} else if(curTypeView.equals(TypeView.MENU) && type.equals(TypeView.FLYINGMODE)) {
 			curTypeView = TypeView.FLYINGMODE;
-			mCameraFragment.setFrameColor("#f0a30a");
+			//mCameraFragment.setFrameColor("#333333");
 			mCameraFragment.resetFragment();
-			mCameraFragment.setCameraMode(CAMERAMODE.FLYING);
 			
-			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
+			//mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(true, true, DIRECTION.TOP);
 			//mContentNavigatingFragment.toggle(false, false, DIRECTION.TOP);
@@ -92,9 +103,8 @@ public class MainView implements IView {
 			curTypeView = TypeView.NAVIGATINGMODE;
 			//mCameraFragment.setCameraSmallScreen();
 			mCameraFragment.setFrameColor("#6a00ff");
-			mCameraFragment.setCameraMode(CAMERAMODE.NAVIGATING);
 			
-			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
+			//mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(false, false, DIRECTION.TOP);
 			//mContentNavigatingFragment.toggle(true, true, DIRECTION.TOP);
@@ -102,7 +112,7 @@ public class MainView implements IView {
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		} else if(curTypeView.equals(TypeView.FLYINGMODE) && type.equals(TypeView.MENU)) {
 			curTypeView = TypeView.MENU;
-			mPagerFragment.toggle(true, true, DIRECTION.BOTTOM);
+			//mPagerFragment.toggle(true, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(false, true, DIRECTION.TOP);
 			//mContentNavigatingFragment.toggle(false, false, DIRECTION.TOP);
@@ -110,7 +120,7 @@ public class MainView implements IView {
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		} else if(curTypeView.equals(TypeView.NAVIGATINGMODE) && type.equals(TypeView.MENU)) {
 			curTypeView = TypeView.MENU;
-			mPagerFragment.toggle(true, true, DIRECTION.BOTTOM);
+			//mPagerFragment.toggle(true, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(false, false, DIRECTION.TOP);
 			//mContentNavigatingFragment.toggle(false, true, DIRECTION.TOP);
@@ -122,7 +132,7 @@ public class MainView implements IView {
 
 	@Override
 	public void updateFlipForwardButtonListener(FlipForwardButtonListener mFlipForwardButtonListener) {
-		mPagerFragment.updateFlipForwardButtonListener(mFlipForwardButtonListener);
+	    mMainFragment.updateFlipForwardButtonListener(mFlipForwardButtonListener);
 	}
 	
 	@Override
@@ -137,12 +147,6 @@ public class MainView implements IView {
 		return null;
 	}
 	
-	@Override
-	public Bitmap getImageBitmap() {
-		if (mCameraFragment != null)	return mCameraFragment.getProcessedImage();
-		return null;
-	}
-
 	@Override
 	public void updateControllerListener(ControllerListener mControllerListener) {
 		mControllerFragment.updateControllerListener(mControllerListener);
@@ -211,4 +215,10 @@ public class MainView implements IView {
 		//return mContentNavigatingFragment.getDroneCurPos();
 	    return null;
 	}
+
+    @Override
+    public Bitmap getImageBitmap() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

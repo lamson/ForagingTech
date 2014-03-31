@@ -37,36 +37,36 @@ public class PagerFragment extends BaseFragment implements OnClickListener, Upda
 		view = (ViewGroup) inflater.inflate(R.layout.fragment_pager, container, false);
 		
 		mPager = (ViewPager) view.findViewById(R.id.pager);
-		mPagerAdapter = new SlidePagerAdapter(getActivity(), getChildFragmentManager(), mFlipForwardButtonListener);
-		mPager.setAdapter(mPagerAdapter);
-		mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-            	Log.d(TAG, "position: " + position);
-            	switch(position) {
-            	case 0:
-            		btnFooterPagers[0].setText(R.string.btn_footer_flying);
-            		btnFooterPagers[1].setText("");
-            		btnFooterPagers[2].setText("");
-            		break;
-            	case 1:
-            		btnFooterPagers[0].setText("");
-            		btnFooterPagers[1].setText(R.string.btn_footer_navigating);
-            		btnFooterPagers[2].setText("");
-            		break;
-            	case 2:
-            		btnFooterPagers[0].setText("");
-            		btnFooterPagers[1].setText("");
-            		btnFooterPagers[2].setText(R.string.btn_footer_setting);
-            		break;
-            	}
-                // When changing pages, reset the action bar actions since they are dependent
-                // on which page is currently active. An alternative approach is to have each
-                // fragment expose actions itself (rather than the activity exposing actions),
-                // but for simplicity, the activity provides the actions in this sample.
-                //invalidateOptionsMenu();
-            }
-        });
+		//mPagerAdapter = new SlidePagerAdapter(getActivity(), getChildFragmentManager(), mFlipForwardButtonListener);
+		//mPager.setAdapter(mPagerAdapter);
+//		mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+//            @Override
+//            public void onPageSelected(int position) {
+//            	Log.d(TAG, "position: " + position);
+//            	switch(position) {
+//            	case 0:
+//            		btnFooterPagers[0].setText(R.string.btn_footer_flying);
+//            		btnFooterPagers[1].setText("");
+//            		btnFooterPagers[2].setText("");
+//            		break;
+//            	case 1:
+//            		btnFooterPagers[0].setText("");
+//            		btnFooterPagers[1].setText(R.string.btn_footer_navigating);
+//            		btnFooterPagers[2].setText("");
+//            		break;
+//            	case 2:
+//            		btnFooterPagers[0].setText("");
+//            		btnFooterPagers[1].setText("");
+//            		btnFooterPagers[2].setText(R.string.btn_footer_setting);
+//            		break;
+//            	}
+//                // When changing pages, reset the action bar actions since they are dependent
+//                // on which page is currently active. An alternative approach is to have each
+//                // fragment expose actions itself (rather than the activity exposing actions),
+//                // but for simplicity, the activity provides the actions in this sample.
+//                //invalidateOptionsMenu();
+//            }
+//        });
 		
 		// Get Button Resources
 		btnFooterPagers = new Button[NUM_PAGES];

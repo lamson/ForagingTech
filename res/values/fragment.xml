@@ -34,7 +34,7 @@
     </style>
         
 	<style name="fragmentContentFlying" parent="@style/fragmentContentPage">
-        <item name="android:background">#f0a30a</item>
+        <item name="android:background">#333333</item>
     </style>
     
 	<style name="fragmentContentNavigating" parent="@style/fragmentContentPage">

@@ -21,25 +21,11 @@
 	    android:drawableLeft="@drawable/btn_show_video_unpressed" />
 	
 	<Button
-	    android:id="@+id/btn_takeoff"
-	    style="@style/FooterPagerButton"
-	    android:layout_gravity="top|right"
-	    android:layout_marginRight="120dp"
-	    android:drawableLeft="@drawable/btn_takeoff_unpressed" />
-	
-	<Button
-	    android:id="@+id/btn_test"
-	    style="@style/FooterPagerButton"
-	    android:layout_gravity="top|right"
-	    android:layout_marginRight="180dp"
-	    android:drawableLeft="@drawable/btn_test_unpressed" />
-	
-	<Button
 	    android:id="@+id/btn_takephoto"
 	    style="@style/FooterPagerButton"
 	    android:layout_gravity="top|right"
-	    android:layout_marginRight="240dp"
-	    android:drawableLeft="@drawable/btn_takephoto_unpressed" />
+	    android:layout_marginRight="120dp"
+	    android:drawableLeft="@drawable/btn_camera" />
 	
 	<Button
 	    android:id="@+id/btn_emergency"
@@ -47,5 +33,12 @@
 	    android:layout_gravity="top|center"
 	    android:paddingLeft="40dp"
 	    android:text="@string/emergency" />
+
+	<Button
+	    android:id="@+id/btn_battery"
+	    android:layout_marginLeft="180dp"
+	    style="@style/FooterPagerButton"
+	    android:layout_marginRight="120dp"
+	    android:drawableLeft="@drawable/icon_battery" />
 
 </FrameLayout>

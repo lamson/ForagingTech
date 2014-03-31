@@ -20,8 +20,6 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 	private Button btn_back;
 	private Button btn_debug;
 	private Button btn_toggle_video;
-	private Button btn_takeoff;
-	private Button btn_test;
 	private Button btn_emergency;
 	private Button btn_takephoto;
 	
@@ -54,10 +52,6 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
     	btn_debug.setOnClickListener(this);
     	btn_toggle_video = (Button) view.findViewById(R.id.btn_toggle_video);
     	btn_toggle_video.setOnClickListener(this);
-    	btn_takeoff = (Button) view.findViewById(R.id.btn_takeoff);
-    	btn_takeoff.setOnClickListener(this);
-    	btn_test = (Button) view.findViewById(R.id.btn_test);
-    	btn_test.setOnClickListener(this);
     	btn_emergency = (Button) view.findViewById(R.id.btn_emergency);
     	btn_emergency.setOnClickListener(this);
     	btn_takephoto = (Button) view.findViewById(R.id.btn_takephoto);
@@ -80,12 +74,6 @@ public class ContentActionBarFragment extends BaseFragment implements OnClickLis
 		case R.id.btn_toggle_video:
 			if (mContentActionBarFragmentButtonListener != null)
 				mContentActionBarFragmentButtonListener.toggleCameraMode();
-			break;
-		case R.id.btn_takeoff:
-			//mDroneTakeOffButtonListener.toggle();
-			break;
-		case R.id.btn_test:
-			
 			break;
 		case R.id.btn_emergency:
 			if (mContentActionBarFragmentButtonListener != null)

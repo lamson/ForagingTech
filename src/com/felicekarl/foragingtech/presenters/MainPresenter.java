@@ -512,7 +512,7 @@ public class MainPresenter implements Runnable {
             
             @Override
             public void batteryLevelChanged(int percentage) {
-                Log.d("Battery", "Battery: " + percentage + "%");
+//                Log.d("Battery", "Battery: " + percentage + "%");
             }
         });
 		

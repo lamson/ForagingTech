@@ -13,6 +13,7 @@ import com.felicekarl.ardrone.ARDroneConstants;
 import com.felicekarl.ardrone.ARDroneInterface.ARDroneCameraMode;
 import com.felicekarl.ardrone.managers.navdata.DroneState;
 import com.felicekarl.ardrone.managers.navdata.listeners.AttitudeListener;
+import com.felicekarl.ardrone.managers.navdata.listeners.BatteryListener;
 import com.felicekarl.ardrone.managers.navdata.listeners.GpsListener;
 import com.felicekarl.ardrone.managers.navdata.listeners.StateListener;
 import com.felicekarl.foragingtech.ForagingTechConstraint;
@@ -506,6 +507,14 @@ public class MainPresenter implements Runnable {
 				droneAlt = altitude;
 			}
 		});
+		
+		mARDrone.updateBatteryListener(new BatteryListener() {
+            
+            @Override
+            public void batteryLevelChanged(int percentage) {
+                Log.d("Battery", "Battery: " + percentage + "%");
+            }
+        });
 		
 		/* add GPS Listener */
 		mARDrone.updateGpsListener(new GpsListener() {

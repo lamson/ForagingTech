@@ -26,7 +26,7 @@ public class MainView implements IView {
 	private SplashFragment mSplashFragment;
 	private PagerFragment mPagerFragment;
 	private ContentFlyingFragment mContentFlyingFragment;
-	private ContentNavigatingFragment mContentNavigatingFragment;
+	//private ContentNavigatingFragment mContentNavigatingFragment;
 	private CameraFragment mCameraFragment;
 	private ControllerFragment mControllerFragment;
 	
@@ -52,8 +52,8 @@ public class MainView implements IView {
 		mContentFlyingFragment = ContentFlyingFragment.create();
 		mFragmentManager.beginTransaction().add(R.id.main, mContentFlyingFragment).commit();
 		/* add content navigating mode fragment */
-		mContentNavigatingFragment = ContentNavigatingFragment.create();
-		mFragmentManager.beginTransaction().add(R.id.main, mContentNavigatingFragment).commit();
+		//mContentNavigatingFragment = ContentNavigatingFragment.create();
+		//mFragmentManager.beginTransaction().add(R.id.main, mContentNavigatingFragment).commit();
 		/* add camera fragment */
 		mCameraFragment = CameraFragment.create();
 		mFragmentManager.beginTransaction().add(R.id.main, mCameraFragment).commit();
@@ -71,7 +71,7 @@ public class MainView implements IView {
 			// splash fragment moves off the stage with slide up animation
 			mSplashFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mContentFlyingFragment.toggle(false, false, DIRECTION.TOP);
-			mContentNavigatingFragment.toggle(false, false, DIRECTION.TOP);
+			//mContentNavigatingFragment.toggle(false, false, DIRECTION.TOP);
 			mCameraFragment.toggle(false, false, DIRECTION.TOP);
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		} else if(curTypeView.equals(TypeView.MENU) && type.equals(TypeView.FLYINGMODE)) {
@@ -83,7 +83,7 @@ public class MainView implements IView {
 			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(true, true, DIRECTION.TOP);
-			mContentNavigatingFragment.toggle(false, false, DIRECTION.TOP);
+			//mContentNavigatingFragment.toggle(false, false, DIRECTION.TOP);
 			mCameraFragment.toggle(true, true, DIRECTION.TOP);
 			mControllerFragment.toggle(true, true, DIRECTION.TOP);
 			
@@ -97,7 +97,7 @@ public class MainView implements IView {
 			mPagerFragment.toggle(false, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(false, false, DIRECTION.TOP);
-			mContentNavigatingFragment.toggle(true, true, DIRECTION.TOP);
+			//mContentNavigatingFragment.toggle(true, true, DIRECTION.TOP);
 			mCameraFragment.toggle(true, true, DIRECTION.TOP);
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		} else if(curTypeView.equals(TypeView.FLYINGMODE) && type.equals(TypeView.MENU)) {
@@ -105,7 +105,7 @@ public class MainView implements IView {
 			mPagerFragment.toggle(true, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(false, true, DIRECTION.TOP);
-			mContentNavigatingFragment.toggle(false, false, DIRECTION.TOP);
+			//mContentNavigatingFragment.toggle(false, false, DIRECTION.TOP);
 			mCameraFragment.toggle(false, true, DIRECTION.TOP);
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		} else if(curTypeView.equals(TypeView.NAVIGATINGMODE) && type.equals(TypeView.MENU)) {
@@ -113,7 +113,7 @@ public class MainView implements IView {
 			mPagerFragment.toggle(true, true, DIRECTION.BOTTOM);
 			mSplashFragment.toggle(false, false, DIRECTION.TOP);
 			mContentFlyingFragment.toggle(false, false, DIRECTION.TOP);
-			mContentNavigatingFragment.toggle(false, true, DIRECTION.TOP);
+			//mContentNavigatingFragment.toggle(false, true, DIRECTION.TOP);
 			mCameraFragment.toggle(false, true, DIRECTION.TOP);
 			mControllerFragment.toggle(false, false, DIRECTION.TOP);
 		}
@@ -151,7 +151,7 @@ public class MainView implements IView {
 	@Override
 	public void setIsFlying(boolean isFlying) {
 		mControllerFragment.setIsFlying(isFlying);
-		mContentNavigatingFragment.setIsFlying(isFlying);
+		//mContentNavigatingFragment.setIsFlying(isFlying);
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class MainView implements IView {
 	public void updateContentActionBarFragmentButtonListener(
 			ContentActionBarFragmentButtonListener mContentActionBarFragmentButtonListener) {
 		mContentFlyingFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
-		mContentNavigatingFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
+		//mContentNavigatingFragment.updateContentActionBarFragmentButtonListener(mContentActionBarFragmentButtonListener);
 	}
 
 	@Override
@@ -176,36 +176,39 @@ public class MainView implements IView {
 	@Override
 	public void updateControllerNavigatingFragmentButtonListener(
 			ControllerNavigatingFragmentButtonListener mControllerNavigatingFragmentButtonListener) {
-		mContentNavigatingFragment.updateControllerNavigatingFragmentButtonListener(mControllerNavigatingFragmentButtonListener);
+		//mContentNavigatingFragment.updateControllerNavigatingFragmentButtonListener(mControllerNavigatingFragmentButtonListener);
 	}
 
 	@Override
 	public NAVIGATINGMODE getNavigatingMode() {
-		return mContentNavigatingFragment.getNavigatingMode();
+	    return null;
+		//return mContentNavigatingFragment.getNavigatingMode();
 	}
 
 	@Override
 	public void setNavigatingMode(NAVIGATINGMODE mode) {
-		mContentNavigatingFragment.setNavigatingMode(mode);
+		//mContentNavigatingFragment.setNavigatingMode(mode);
 	}
 
 	@Override
 	public List<MapPos> getPath() {
-		return mContentNavigatingFragment.getPath();
+		//return mContentNavigatingFragment.getPath();
+	    return null;
 	}
 
 	@Override
 	public void setDroneCurPos(double lat, double lon) {
-		mContentNavigatingFragment.setDroneCurPos(lat, lon);
+		//mContentNavigatingFragment.setDroneCurPos(lat, lon);
 	}
 
 	@Override
 	public void updateUserCurPos() {
-		mContentNavigatingFragment.updateUserCurPos();
+		//mContentNavigatingFragment.updateUserCurPos();
 	}
 
 	@Override
 	public MapPos getDroneCurPos() {
-		return mContentNavigatingFragment.getDroneCurPos();
+		//return mContentNavigatingFragment.getDroneCurPos();
+	    return null;
 	}
 }
